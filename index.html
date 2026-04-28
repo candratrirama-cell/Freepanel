@@ -6,69 +6,69 @@
     <title>Ptefree by @maramadhona</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; overflow-x: hidden; }
-        .card { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; }
-        .tab-btn { padding: 14px; font-weight: 800; font-size: 11px; text-transform: uppercase; transition: 0.3s; border-bottom: 3px solid transparent; width: 50%; text-align: center; cursor: pointer; color: #64748b; }
-        .tab-btn.active { color: #6366f1; border-color: #6366f1; background: rgba(99, 102, 241, 0.05); }
-        .ram-btn { border: 1px solid #334155; cursor: pointer; text-align: center; border-radius: 12px; padding: 12px; transition: 0.2s; background: #1e293b; }
-        .ram-btn.active { border-color: #6366f1; background: #312e81; transform: scale(1.02); }
-        .modal-bg { background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); }
-        .animate-pulse-fast { animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        body { background: #0f172a; color: #f1f5f9; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 1.25rem; }
+        .tab-btn { padding: 16px; font-weight: 800; font-size: 11px; text-transform: uppercase; transition: 0.3s; border-bottom: 3px solid transparent; width: 50%; text-align: center; cursor: pointer; color: #64748b; }
+        .tab-btn.active { color: #818cf8; border-color: #818cf8; background: rgba(99, 102, 241, 0.05); }
+        .ram-btn { border: 1px solid #334155; cursor: pointer; text-align: center; border-radius: 12px; padding: 14px; transition: 0.2s; background: #1e293b; }
+        .ram-btn.active { border-color: #818cf8; background: #312e81; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .modal-bg { background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); }
     </style>
 </head>
 <body class="p-4 flex flex-col items-center min-h-screen">
 
     <div class="w-full max-w-2xl">
-        <div class="text-center my-8">
-            <h1 class="text-4xl font-black italic text-indigo-400 tracking-tighter">Ptefree</h1>
-            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em]">By @maramadhona</p>
+        <div class="text-center my-10">
+            <h1 class="text-5xl font-black italic text-indigo-400 tracking-tighter italic">Ptefree</h1>
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em] mt-2">By @maramadhona</p>
         </div>
 
-        <div id="login-section" class="card p-10 text-center max-w-sm mx-auto shadow-2xl">
-            <p class="mb-8 text-sm text-slate-400">Silahkan autentikasi untuk melanjutkan</p>
-            <button id="btn-login" class="w-full bg-white text-black py-4 rounded-xl font-black flex items-center justify-center active:scale-95 transition">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-3"> LOGIN GOOGLE
+        <div id="login-section" class="card p-10 text-center max-w-sm mx-auto shadow-2xl border-t-4 border-indigo-500">
+            <h2 class="text-lg font-bold mb-2">Autentikasi Diperlukan</h2>
+            <p class="mb-8 text-xs text-slate-400">Gunakan akun Google untuk sinkronisasi riwayat akun Anda.</p>
+            <button id="btn-login" class="w-full bg-white text-black py-4 rounded-xl font-black flex items-center justify-center active:scale-95 transition shadow-lg">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-3"> MASUK DENGAN GOOGLE
             </button>
         </div>
 
-        <div id="app-section" class="hidden space-y-4">
+        <div id="app-section" class="hidden space-y-6">
             
-            <div class="card overflow-hidden flex shadow-xl">
+            <div class="card overflow-hidden flex shadow-2xl">
                 <div id="tab-gen" class="tab-btn active">1. Generate Account</div>
                 <div id="tab-list" class="tab-btn">2. Daftar Akun Saya</div>
             </div>
 
             <div id="page-gen" class="space-y-4">
-                <div class="card p-6 border-t-4 border-indigo-500 shadow-xl">
+                <div class="card p-6 border-b-4 border-indigo-500 shadow-xl">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-black text-xs uppercase text-indigo-300 tracking-widest">Pilih Server</h3>
-                        <div id="stock-info" class="text-[9px] px-3 py-1 bg-slate-800 rounded-full font-bold">Checking...</div>
+                        <h3 class="font-black text-[10px] uppercase text-indigo-300 tracking-widest">Konfigurasi Instance</h3>
+                        <div id="stock-info" class="text-[9px] px-3 py-1 bg-slate-800 rounded-full font-bold">Menghubungkan...</div>
                     </div>
                     
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
-                        <div class="ram-btn" data-ram="1GB" data-id="1" data-ads="5"><b>1GB</b><br><span class="text-[8px] opacity-60">ID 1 • 5 Ads</span></div>
-                        <div class="ram-btn" data-ram="5GB" data-id="2" data-ads="20"><b>5GB</b><br><span class="text-[8px] opacity-60">ID 2 • 20 Ads</span></div>
-                        <div class="ram-btn" data-ram="8GB" data-id="3" data-ads="30"><b>8GB</b><br><span class="text-[8px] opacity-60">ID 3 • 30 Ads</span></div>
-                        <div class="ram-btn" data-ram="9GB" data-id="4" data-ads="35"><b>9GB</b><br><span class="text-[8px] opacity-60">ID 4 • 35 Ads</span></div>
-                        <div class="ram-btn col-span-2" data-ram="UNLIMITED" data-id="5" data-ads="50"><b class="text-yellow-500">UNLIMITED</b><br><span class="text-[8px] opacity-60">ID 5 • 50 Ads</span></div>
+                        <div class="ram-btn" data-ram="1GB" data-id="1" data-ads="5"><b>1GB</b><br><span class="text-[8px] opacity-60 uppercase">ID 1 • 5 Ads</span></div>
+                        <div class="ram-btn" data-ram="5GB" data-id="2" data-ads="20"><b>5GB</b><br><span class="text-[8px] opacity-60 uppercase">ID 2 • 20 Ads</span></div>
+                        <div class="ram-btn" data-ram="8GB" data-id="3" data-ads="30"><b>8GB</b><br><span class="text-[8px] opacity-60 uppercase">ID 3 • 30 Ads</span></div>
+                        <div class="ram-btn" data-ram="9GB" data-id="4" data-ads="35"><b>9GB</b><br><span class="text-[8px] opacity-60 uppercase">ID 4 • 35 Ads</span></div>
+                        <div class="ram-btn col-span-2" data-ram="UNLIMITED" data-id="5" data-ads="50"><b class="text-yellow-500">UNLIMITED</b><br><span class="text-[8px] opacity-60 uppercase">ID 5 • 50 Ads</span></div>
                     </div>
 
-                    <div class="text-center p-6 bg-slate-900 rounded-2xl border border-slate-700">
-                        <p id="ad-count-text" class="text-4xl font-black text-indigo-400 mb-1">0</p>
-                        <p id="ad-instruction" class="text-[9px] text-slate-500 mb-6 uppercase font-bold tracking-widest">Pilih RAM</p>
-                        <button id="btn-watch-ads" class="hidden w-full py-4 bg-indigo-600 rounded-xl font-black text-sm mb-3 animate-pulse-fast shadow-lg shadow-indigo-500/20">KLIK IKLAN</button>
-                        <button id="btn-claim" class="w-full py-4 bg-slate-800 text-slate-500 rounded-xl font-black text-sm cursor-not-allowed transition" disabled>KLAIM SEKARANG</button>
+                    <div class="text-center p-8 bg-slate-900/80 rounded-2xl border border-slate-700/50">
+                        <p id="ad-count-text" class="text-5xl font-black text-indigo-400 mb-2">0</p>
+                        <p id="ad-instruction" class="text-[9px] text-slate-500 mb-8 uppercase font-bold tracking-widest">Silahkan Pilih RAM</p>
+                        <button id="btn-watch-ads" class="hidden w-full py-5 bg-indigo-600 rounded-xl font-black text-xs uppercase tracking-widest mb-4 animate-bounce shadow-lg shadow-indigo-500/40">OPEN ADSTERRA</button>
+                        <button id="btn-claim" class="w-full py-5 bg-slate-800 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest cursor-not-allowed transition-all" disabled>KLAIM / ANTRE</button>
                     </div>
                 </div>
             </div>
 
             <div id="page-list" class="hidden space-y-4">
-                <div class="card p-6 min-h-[300px] shadow-xl">
-                    <h3 class="font-black text-xs uppercase text-green-400 mb-6 flex items-center">
-                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span> Database Akun (24 Jam)
+                <div class="card p-6 min-h-[350px] shadow-2xl">
+                    <h3 class="font-black text-[10px] uppercase text-green-400 mb-8 flex items-center tracking-widest">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse"></span> AKTIF (EXPIRE 24J)
                     </h3>
-                    <div id="my-accounts-list" class="space-y-4 text-center py-20 text-xs text-slate-500 italic">
-                        Belum ada akun yang diamankan.
+                    <div id="my-accounts-list" class="space-y-4 text-center py-20 text-[11px] text-slate-500 font-medium">
+                        Database sedang dimuat...
                     </div>
                 </div>
             </div>
@@ -76,11 +76,11 @@
     </div>
 
     <div id="custom-modal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-6">
-        <div class="card w-full max-w-xs p-8 text-center border-t-4 border-indigo-500 shadow-2xl">
-            <div id="modal-icon" class="w-16 h-16 rounded-3xl mx-auto mb-6 flex items-center justify-center text-3xl"></div>
-            <h3 id="modal-title" class="text-xl font-black mb-3"></h3>
-            <div id="modal-content" class="text-sm text-slate-400 mb-8 leading-relaxed"></div>
-            <button onclick="document.getElementById('custom-modal').classList.add('hidden')" class="w-full py-4 bg-indigo-600 rounded-xl font-black text-xs tracking-widest">SAYA MENGERTI</button>
+        <div class="card w-full max-w-xs p-10 text-center border-t-4 border-indigo-500 shadow-2xl">
+            <div id="modal-icon" class="w-20 h-20 rounded-3xl mx-auto mb-8 flex items-center justify-center text-4xl"></div>
+            <h3 id="modal-title" class="text-2xl font-black mb-4"></h3>
+            <div id="modal-content" class="text-xs text-slate-400 mb-10 leading-relaxed"></div>
+            <button onclick="document.getElementById('custom-modal').classList.add('hidden')" class="w-full py-4 bg-indigo-600 rounded-xl font-black text-[10px] tracking-[0.2em] uppercase">LANJUTKAN</button>
         </div>
     </div>
 
@@ -118,13 +118,11 @@
 
         document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
 
-        // Tab Navigation
         const tGen = document.getElementById('tab-gen'), tList = document.getElementById('tab-list');
         const pGen = document.getElementById('page-gen'), pList = document.getElementById('page-list');
         tGen.onclick = () => { tGen.classList.add('active'); tList.classList.remove('active'); pGen.classList.remove('hidden'); pList.classList.add('hidden'); }
         tList.onclick = () => { tList.classList.add('active'); tGen.classList.remove('active'); pList.classList.remove('hidden'); pGen.classList.add('hidden'); }
 
-        // Sync History (Updated: Handle Pending)
         function syncHistory(email) {
             onValue(ref(db, 'history_klaim'), (snap) => {
                 const list = document.getElementById('my-accounts-list');
@@ -141,28 +139,30 @@
                                 found = true;
                                 const isPending = !item.username;
                                 list.innerHTML += `
-                                <div class="p-5 bg-slate-900 rounded-2xl border ${isPending ? 'border-yellow-500/40' : 'border-slate-700'} mb-4 text-left">
-                                    <div class="flex justify-between mb-3 items-center">
-                                        <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">${item.ram} SERVER</span>
-                                        <span class="text-[9px] font-bold px-2 py-1 rounded ${isPending ? 'bg-yellow-500/10 text-yellow-500' : 'bg-green-500/10 text-green-500'}">
-                                            ${isPending ? 'PENDING' : 'READY'}
+                                <div class="p-6 bg-slate-900 rounded-3xl border ${isPending ? 'border-yellow-500/30' : 'border-indigo-500/20'} mb-4 text-left shadow-lg">
+                                    <div class="flex justify-between mb-4 items-center">
+                                        <span class="text-[10px] font-black text-indigo-400 tracking-tighter uppercase">${item.ram} SERVER</span>
+                                        <span class="text-[8px] font-black px-3 py-1 rounded-full ${isPending ? 'bg-yellow-500/10 text-yellow-500' : 'bg-green-500/10 text-green-500'}">
+                                            ${isPending ? 'PRIORITY PENDING' : 'ACTIVE'}
                                         </span>
                                     </div>
                                     ${isPending ? 
-                                        `<p class="text-[11px] text-slate-400 italic">Antrean Prioritas: Menunggu restok ID ${item.ram_id}. Akun otomatis muncul di sini jika admin sudah setor.</p>` : 
-                                        `<div class="space-y-1 mb-4"><p class="text-xs font-mono text-slate-300">U: ${item.username}</p><p class="text-xs font-mono text-slate-300">P: ${item.password}</p></div>
-                                         <a href="https://myselfpanellyi.claidexdigital.tokyo" target="_blank" class="block w-full py-3 bg-indigo-500/10 text-indigo-400 text-center rounded-xl text-[10px] font-black">LOGIN PANEL</a>`
+                                        `<p class="text-[10px] text-slate-400 font-medium leading-relaxed italic opacity-80">Menunggu restok ID ${item.ram_id}. Akun akan diperbarui secara otomatis di kartu ini.</p>` : 
+                                        `<div class="space-y-2 mb-6">
+                                            <div class="flex justify-between"><span class="text-[9px] text-slate-500 font-bold uppercase">Username</span><span class="text-xs font-mono text-slate-200">${item.username}</span></div>
+                                            <div class="flex justify-between"><span class="text-[9px] text-slate-500 font-bold uppercase">Password</span><span class="text-xs font-mono text-slate-200">${item.password}</span></div>
+                                        </div>
+                                         <a href="https://myselfpanellyi.claidexdigital.tokyo" target="_blank" class="block w-full py-4 bg-indigo-500 text-white text-center rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/30">BUKA PANEL</a>`
                                     }
                                 </div>`;
                             }
                         }
                     });
                 }
-                if(!found) list.innerHTML = `<p class="text-center py-20 text-xs text-slate-500 italic">Belum ada akun yang diamankan.</p>`;
+                if(!found) list.innerHTML = "Belum ada riwayat akun.";
             });
         }
 
-        // Monitor Stock
         function monitorStock() {
             onValue(ref(db, 'stok_akun'), (snap) => {
                 let count = 0;
@@ -172,12 +172,11 @@
                     });
                 }
                 const info = document.getElementById('stock-info');
-                info.innerText = count > 0 ? `STOK: ${count} UNIT` : "STOK HABIS";
+                info.innerText = count > 0 ? `STOK: ${count} SERVER` : "STOK HABIS";
                 info.className = `text-[9px] px-3 py-1 rounded-full font-bold ${count > 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`;
             });
         }
 
-        // Selection Logic
         document.querySelectorAll('.ram-btn').forEach(btn => {
             btn.onclick = () => {
                 document.querySelectorAll('.ram-btn').forEach(b => b.classList.remove('active'));
@@ -188,12 +187,11 @@
                 currentAds = 0;
                 document.getElementById('btn-watch-ads').classList.remove('hidden');
                 document.getElementById('ad-count-text').innerText = "0 / " + targetAds;
-                document.getElementById('ad-instruction').innerText = "Silahkan Klik Iklan";
+                document.getElementById('ad-instruction').innerText = "Klik Tombol Iklan";
                 monitorStock();
             };
         });
 
-        // Ad Logic
         document.getElementById('btn-watch-ads').onclick = () => {
             window.open(adLink, '_blank');
             currentAds++;
@@ -202,11 +200,10 @@
                 document.getElementById('btn-watch-ads').classList.add('hidden');
                 const cb = document.getElementById('btn-claim');
                 cb.disabled = false;
-                cb.className = "w-full py-4 bg-indigo-600 text-white rounded-xl font-black text-sm active:scale-95 transition shadow-lg shadow-indigo-500/30";
+                cb.className = "w-full py-5 bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-500/30 active:scale-95 transition-all";
             }
         };
 
-        // CLAIM LOGIC (FIXED & IMPROVED)
         document.getElementById('btn-claim').onclick = async () => {
             const email = auth.currentUser.email;
             const curId = selectedId;
@@ -215,42 +212,47 @@
             const m = document.getElementById('custom-modal'), mI = document.getElementById('modal-icon'), mT = document.getElementById('modal-title'), mC = document.getElementById('modal-content');
 
             try {
-                // Ambil stok terbaru
-                const snap = await get(query(ref(db, 'stok_akun'), orderByChild('status'), equalTo('available')));
+                // Gunakan Database Reference Langsung untuk performa lebih stabil
+                const stockRef = ref(db, 'stok_akun');
+                const snap = await get(stockRef);
                 
                 let targetKey = null, accData = null;
+                
                 if (snap.exists()) {
-                    snap.forEach((child) => {
-                        if (child.val().ram_id === curId && !targetKey) {
-                            targetKey = child.key; accData = child.val();
+                    const allStock = snap.val();
+                    for (const key in allStock) {
+                        if (allStock[key].status === 'available' && allStock[key].ram_id === curId) {
+                            targetKey = key;
+                            accData = allStock[key];
+                            break;
                         }
-                    });
+                    }
                 }
 
-                if (targetKey) {
-                    // ADA STOK: Tulis Riwayat, baru update stok (Agar riwayat terjamin aman)
+                if (targetKey && accData) {
                     const finalData = { ...accData, ram: curRam, claimed_by: email, claimed_at: Date.now() };
+                    // Simpan ke riwayat dulu
                     await push(ref(db, 'history_klaim'), finalData);
+                    // Tandai stok sebagai terpakai
                     await update(ref(db, `stok_akun/${targetKey}`), { status: 'used' });
 
-                    mI.innerHTML = "✅"; mI.className = "w-16 h-16 rounded-full mx-auto mb-6 bg-green-500/20 text-green-400 flex items-center justify-center";
-                    mT.innerText = "BERHASIL"; mC.innerHTML = `Akun <b>${curRam}</b> diamankan. Cek menu <b>Daftar Akun Saya</b>.`;
+                    mI.innerHTML = "✅"; mI.className = "w-20 h-20 rounded-3xl mx-auto mb-8 bg-green-500/10 text-green-400 flex items-center justify-center shadow-lg";
+                    mT.innerText = "BERHASIL"; mC.innerHTML = `Akun <b>${curRam}</b> telah ditambahkan ke database Anda.`;
                 } else {
-                    // HABIS: Tulis ke Riwayat sebagai Pending + masuk Antrean Prioritas
                     const pendingData = { ram: curRam, ram_id: curId, claimed_by: email, claimed_at: Date.now(), priority: true };
                     
                     await push(ref(db, 'history_klaim'), pendingData);
                     await push(ref(db, 'antrean'), pendingData);
 
-                    mI.innerHTML = "⏳"; mI.className = "w-16 h-16 rounded-full mx-auto mb-6 bg-yellow-500/20 text-yellow-400 flex items-center justify-center";
-                    mT.innerText = "ANTREAN"; mC.innerHTML = `Stok RAM <b>${curRam}</b> habis. Anda sudah masuk <b>ANTREAN PRIORITAS</b>. Akun akan dikirim otomatis ke daftar riwayat jika admin restok.`;
+                    mI.innerHTML = "⏳"; mI.className = "w-20 h-20 rounded-3xl mx-auto mb-8 bg-yellow-500/10 text-yellow-500 flex items-center justify-center shadow-lg";
+                    mT.innerText = "ANTREAN"; mC.innerHTML = `Stok RAM <b>${curRam}</b> habis. Anda masuk antrean prioritas. Akun akan muncul otomatis saat admin restok.`;
                 }
                 
                 m.classList.remove('hidden');
                 resetUI();
             } catch (err) {
-                alert("Koneksi Error!");
-                console.error(err);
+                console.error("Firebase Error:", err);
+                alert("Koneksi Firebase bermasalah. Pastikan internet stabil.");
             }
         };
 
@@ -259,7 +261,7 @@
             document.querySelectorAll('.ram-btn').forEach(b => b.classList.remove('active'));
             const cBtn = document.getElementById('btn-claim');
             cBtn.disabled = true;
-            cBtn.className = "w-full py-4 bg-slate-800 text-slate-500 rounded-xl font-black text-sm cursor-not-allowed";
+            cBtn.className = "w-full py-5 bg-slate-800 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest cursor-not-allowed";
             document.getElementById('ad-count-text').innerText = "0";
             document.getElementById('ad-instruction').innerText = "Pilih RAM";
         }
