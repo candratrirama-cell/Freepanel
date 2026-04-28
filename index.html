@@ -5,77 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ptefree by @maramadhona</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #020617; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; background-image: radial-gradient(circle at top right, #1e1b4b, transparent), radial-gradient(circle at bottom left, #0f172a, transparent); }
-        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .ram-card { cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; }
-        .ram-card.active { border-color: #6366f1; background: rgba(99, 102, 241, 0.1); transform: scale(1.05); }
-        .btn-primary { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); transition: all 0.3s ease; }
-        .modal-enter { animation: modalIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes modalIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; overflow-x: hidden; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; }
+        .tab-btn { padding: 14px; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; border-bottom: 3px solid transparent; width: 50%; text-align: center; cursor: pointer; color: #64748b; }
+        .tab-btn.active { color: #6366f1; border-color: #6366f1; background: rgba(99, 102, 241, 0.05); }
+        .ram-btn { border: 1px solid #334155; cursor: pointer; text-align: center; border-radius: 12px; padding: 12px; transition: 0.2s; background: #1e293b; }
+        .ram-btn.active { border-color: #6366f1; background: #312e81; transform: scale(1.05); }
+        .modal-bg { background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4">
+<body class="p-4 flex flex-col items-center min-h-screen">
 
-    <div class="w-full max-w-5xl mt-10">
-        <div class="text-center mb-10">
-            <h1 class="text-5xl font-extrabold tracking-tighter mb-2 italic">Ptefree <span class="text-indigo-400">Panel</span></h1>
-            <p class="text-gray-500 text-sm font-semibold tracking-widest uppercase">Created by @maramadhona</p>
+    <div class="w-full max-w-2xl">
+        <div class="text-center my-8">
+            <h1 class="text-4xl font-black italic text-indigo-400 tracking-tighter">Ptefree</h1>
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em]">Created by @maramadhona</p>
         </div>
 
-        <div id="login-section" class="glass p-12 rounded-[2.5rem] max-w-md mx-auto text-center border-b-4 border-indigo-500">
-            <h2 class="text-3xl font-black mb-10">Gatekeeper</h2>
-            <button id="btn-login" class="w-full bg-white text-black py-5 rounded-2xl font-black flex items-center justify-center hover:bg-gray-100 shadow-xl">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6 mr-3"> Login Google
+        <div id="login-section" class="card p-10 text-center max-w-sm mx-auto shadow-2xl border-b-4 border-indigo-500">
+            <div class="mb-6 flex justify-center">
+                <div class="p-4 bg-indigo-500/10 rounded-2xl text-indigo-400">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8-0v4h8z"></path></svg>
+                </div>
+            </div>
+            <h2 class="text-xl font-black mb-2 uppercase tracking-tight">Gatekeeper</h2>
+            <p class="mb-8 text-xs text-slate-400 leading-relaxed">Silahkan masuk menggunakan akun Google untuk mengakses panel.</p>
+            <button id="btn-login" class="w-full bg-white text-black py-4 rounded-xl font-black flex items-center justify-center active:scale-95 transition shadow-lg">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-3"> LOGIN GOOGLE
             </button>
         </div>
 
-        <div id="dashboard-section" class="hidden space-y-6">
+        <div id="app-section" class="hidden space-y-4">
             
-            <div id="my-accounts-section" class="glass p-6 rounded-[2rem] border-l-4 border-green-500 hidden">
-                <h3 class="font-black text-lg mb-4 text-green-400 italic">Akun Aktif Anda (Berlaku 24 Jam)</h3>
-                <div id="my-accounts-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            <div class="card overflow-hidden flex shadow-xl">
+                <div id="tab-gen" class="tab-btn active">1. Generate Account</div>
+                <div id="tab-list" class="tab-btn">2. Daftar Akun Saya</div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <div class="lg:col-span-3 glass p-8 rounded-[2.5rem]">
-                    <h3 class="font-black text-xl mb-6">⚡ Pilih RAM & Kerjakan Iklan</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8" id="ram-selector">
-                        <div class="ram-card glass p-4 rounded-2xl text-center" data-ram="1gb" data-ads="5">
-                            <p class="text-xl font-black">1GB</p><p class="text-[9px] text-gray-500">5x Ads</p>
-                        </div>
-                        <div class="ram-card glass p-4 rounded-2xl text-center" data-ram="5gb" data-ads="20">
-                            <p class="text-xl font-black">5GB</p><p class="text-[9px] text-gray-500">20x Ads</p>
-                        </div>
-                        <div class="ram-card glass p-4 rounded-2xl text-center" data-ram="8gb" data-ads="30">
-                            <p class="text-xl font-black">8GB</p><p class="text-[9px] text-gray-500">30x Ads</p>
-                        </div>
-                        <div class="ram-card glass p-4 rounded-2xl text-center" data-ram="9gb" data-ads="35">
-                            <p class="text-xl font-black">9GB</p><p class="text-[9px] text-gray-500">35x Ads</p>
-                        </div>
-                        <div class="ram-card glass p-4 rounded-2xl text-center border-yellow-500/20" data-ram="unlimited" data-ads="50">
-                            <p class="text-xl font-black text-yellow-500">∞ GB</p><p class="text-[9px] text-gray-500">50x Ads</p>
-                        </div>
+            <div id="page-gen" class="space-y-4">
+                <div class="card p-6 border-t-4 border-indigo-500">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-black text-xs uppercase text-indigo-300">Konfigurasi RAM</h3>
+                        <div id="stock-info" class="text-[9px] px-3 py-1 bg-slate-800 rounded-full font-bold tracking-tighter">Checking...</div>
                     </div>
-                    <div id="status-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-                </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+                        <div class="ram-btn" data-ram="1gb" data-id="1" data-ads="5"><b>1GB</b><br><span class="text-[8px] opacity-60">ID 1 • 5x Ads</span></div>
+                        <div class="ram-btn" data-ram="5gb" data-id="2" data-ads="20"><b>5GB</b><br><span class="text-[8px] opacity-60">ID 2 • 20x Ads</span></div>
+                        <div class="ram-btn" data-ram="8gb" data-id="3" data-ads="30"><b>8GB</b><br><span class="text-[8px] opacity-60">ID 3 • 30x Ads</span></div>
+                        <div class="ram-btn" data-ram="9gb" data-id="4" data-ads="35"><b>9GB</b><br><span class="text-[8px] opacity-60">ID 4 • 35x Ads</span></div>
+                        <div class="ram-btn col-span-2" data-ram="unlimited" data-id="5" data-ads="50"><b class="text-yellow-500">UNLIMITED</b><br><span class="text-[8px] opacity-60">ID 5 • 50x Ads</span></div>
+                    </div>
 
-                <div class="glass p-8 rounded-[2.5rem] border-t-4 border-indigo-500 text-center">
-                    <div class="text-2xl font-black mb-2" id="ad-count-text">0</div>
-                    <p class="text-[10px] text-gray-500 mb-6 uppercase" id="ad-instruction">Pilih RAM</p>
-                    <button id="btn-watch-ads" class="hidden w-full py-4 bg-indigo-500 rounded-xl font-black text-xs mb-4 animate-bounce">KLIK IKLAN</button>
-                    <button id="btn-claim" class="w-full py-4 bg-gray-800 text-gray-500 rounded-xl font-black text-xs" disabled>CLAIM / QUEUE</button>
+                    <div class="text-center p-6 bg-slate-900/50 rounded-2xl border border-slate-700/50">
+                        <div class="mb-4">
+                            <p id="ad-count-text" class="text-4xl font-black text-indigo-400">0</p>
+                            <p id="ad-instruction" class="text-[9px] text-slate-500 mt-1 uppercase font-bold tracking-widest">Pilih RAM Terlebih Dahulu</p>
+                        </div>
+                        <button id="btn-watch-ads" class="hidden w-full py-4 bg-indigo-600 rounded-xl font-black text-sm mb-3 animate-bounce shadow-lg shadow-indigo-500/20">KLIK IKLAN</button>
+                        <button id="btn-claim" class="w-full py-4 bg-slate-800 text-slate-500 rounded-xl font-black text-sm cursor-not-allowed transition-all" disabled>KLAIM / ANTRE</button>
+                    </div>
                 </div>
             </div>
+
+            <div id="page-list" class="hidden space-y-4">
+                <div class="card p-6 min-h-[300px]">
+                    <h3 class="font-black text-xs uppercase text-green-400 mb-6 flex items-center">
+                        <span class="mr-2">●</span> Koleksi Akun (Aktif 24 Jam)
+                    </h3>
+                    <div id="my-accounts-list" class="space-y-4">
+                        <p class="text-center text-slate-500 italic py-20 text-xs">Belum ada akun yang diamankan.</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div id="custom-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 hidden flex items-center justify-center p-6">
-        <div class="glass max-w-md w-full p-10 rounded-[3rem] modal-enter text-center">
-            <h3 id="modal-title" class="text-3xl font-black mb-6">Success!</h3>
-            <div id="modal-content" class="space-y-4 text-left mb-8"></div>
-            <button onclick="location.reload()" class="w-full py-4 bg-white/10 rounded-2xl font-bold">OK</button>
+    <div id="custom-modal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-6">
+        <div class="card w-full max-w-xs p-8 text-center border-t-4 border-indigo-500 shadow-2xl">
+            <div id="modal-icon" class="w-16 h-16 rounded-3xl mx-auto mb-6 flex items-center justify-center text-3xl"></div>
+            <h3 id="modal-title" class="text-xl font-black mb-3"></h3>
+            <div id="modal-content" class="text-sm text-slate-400 mb-8 leading-relaxed"></div>
+            <button onclick="document.getElementById('custom-modal').classList.add('hidden')" class="w-full py-4 bg-indigo-600 rounded-xl font-black text-xs tracking-widest active:scale-95 transition">SAYA MENGERTI</button>
         </div>
     </div>
 
@@ -99,63 +112,73 @@
         const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
 
-        let targetAds = 0, currentAds = 0, selectedRam = "";
+        let targetAds = 0, currentAds = 0, selectedRam = "", selectedId = "";
         const adLink = "https://widthwidowzoology.com/vmsuxp7mg0?key=e69a17094ebdb4761ca5607561ac9184";
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('dashboard-section').classList.remove('hidden');
-                syncMyAccounts(user.email);
-                loadStok();
+                document.getElementById('app-section').classList.remove('hidden');
+                syncHistory(user.email);
+                monitorStock();
             }
         });
 
         document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
 
-        // Logic History & Auto Expire (1 Hari)
-        function syncMyAccounts(email) {
-            const historyRef = ref(db, 'history_klaim');
-            onValue(historyRef, (snap) => {
-                const data = snap.val();
-                const container = document.getElementById('my-accounts-section');
-                const list = document.getElementById('my-accounts-list');
-                list.innerHTML = "";
-                let hasData = false;
+        // Navigation
+        const tabGen = document.getElementById('tab-gen'), tabList = document.getElementById('tab-list');
+        const pageGen = document.getElementById('page-gen'), pageList = document.getElementById('page-list');
 
-                if (data) {
-                    const now = Date.now();
-                    Object.keys(data).forEach(key => {
-                        const item = data[key];
-                        // Auto Delete jika > 24 jam
-                        if (now - item.claimed_at > 86400000) {
-                            remove(ref(db, `history_klaim/${key}`));
+        tabGen.onclick = () => { tabGen.classList.add('active'); tabList.classList.remove('active'); pageGen.classList.remove('hidden'); pageList.classList.add('hidden'); }
+        tabList.onclick = () => { tabList.classList.add('active'); tabGen.classList.remove('active'); pageList.classList.remove('hidden'); pageGen.classList.add('hidden'); }
+
+        // Sync History & Auto-Expire
+        function syncHistory(email) {
+            onValue(ref(db, 'history_klaim'), (snap) => {
+                const list = document.getElementById('my-accounts-list');
+                list.innerHTML = ""; let found = false;
+                const now = Date.now();
+                if (snap.val()) {
+                    Object.keys(snap.val()).forEach(key => {
+                        const item = snap.val()[key];
+                        // Expire 24 Jam (86.400.000 ms)
+                        if (now - item.claimed_at > 86400000) { 
+                            remove(ref(db, `history_klaim/${key}`)); 
                         } else if (item.claimed_by === email) {
-                            hasData = true;
+                            found = true;
                             list.innerHTML += `
-                                <div class="p-4 bg-white/5 border border-green-500/30 rounded-2xl">
-                                    <p class="text-[10px] font-bold text-green-400">RAM: ${item.ram}</p>
-                                    <p class="text-sm font-mono">U: ${item.username} | P: ${item.password}</p>
-                                    <a href="https://myselfpanellyi.claidexdigital.tokyo" target="_blank" class="text-[10px] text-blue-400 underline">Buka Panel</a>
-                                </div>`;
+                            <div class="p-5 bg-slate-900 rounded-2xl border border-slate-700 shadow-lg">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">${item.ram} SERVER</span>
+                                    <span class="text-[9px] text-green-500 font-bold px-2 py-1 bg-green-500/10 rounded">AKTIF</span>
+                                </div>
+                                <div class="space-y-1 mb-4">
+                                    <p class="text-xs font-mono text-slate-300"><span class="text-slate-500">U:</span> ${item.username}</p>
+                                    <p class="text-xs font-mono text-slate-300"><span class="text-slate-500">P:</span> ${item.password}</p>
+                                </div>
+                                <a href="https://myselfpanellyi.claidexdigital.tokyo" target="_blank" class="block w-full py-3 bg-indigo-500/10 text-indigo-400 text-center rounded-xl text-[10px] font-black hover:bg-indigo-500 hover:text-white transition">LOGIN PANEL</a>
+                            </div>`;
                         }
                     });
                 }
-                container.classList.toggle('hidden', !hasData);
+                if(!found) list.innerHTML = `<p class="text-center text-slate-500 italic py-20 text-xs">Belum ada akun yang diamankan.</p>`;
             });
         }
 
-        // Pilih RAM
-        document.querySelectorAll('.ram-card').forEach(card => {
-            card.onclick = () => {
-                document.querySelectorAll('.ram-card').forEach(c => c.classList.remove('active'));
-                card.classList.add('active');
-                selectedRam = card.dataset.ram;
-                targetAds = parseInt(card.dataset.ads);
+        // Generator UI Control
+        document.querySelectorAll('.ram-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.ram-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedRam = btn.dataset.ram;
+                selectedId = btn.dataset.id;
+                targetAds = parseInt(btn.dataset.ads);
                 currentAds = 0;
                 document.getElementById('btn-watch-ads').classList.remove('hidden');
                 document.getElementById('ad-count-text').innerText = "0 / " + targetAds;
-                document.getElementById('ad-instruction').innerText = "Selesaikan Iklan";
+                document.getElementById('ad-instruction').innerText = "Klik Tombol Iklan";
+                monitorStock(); // Update stock info untuk ID tertentu
             };
         });
 
@@ -165,54 +188,70 @@
             document.getElementById('ad-count-text').innerText = `${currentAds} / ${targetAds}`;
             if (currentAds >= targetAds) {
                 document.getElementById('btn-watch-ads').classList.add('hidden');
-                document.getElementById('btn-claim').disabled = false;
-                document.getElementById('btn-claim').classList.add('btn-primary', 'text-white');
+                const claimBtn = document.getElementById('btn-claim');
+                claimBtn.disabled = false;
+                claimBtn.className = "w-full py-4 bg-indigo-600 text-white rounded-xl font-black text-sm active:scale-95 transition-all shadow-xl shadow-indigo-500/30";
             }
         };
 
-        function loadStok() {
+        function monitorStock() {
             onValue(ref(db, 'stok_akun'), (snap) => {
-                const list = document.getElementById('status-list');
-                const data = snap.val();
-                let count = 0;
-                if (data) {
-                    Object.values(data).forEach(v => { if(v.status === 'available') count++; });
+                let currentCatStock = 0;
+                if (snap.val()) {
+                    Object.values(snap.val()).forEach(v => {
+                        if(v.status === 'available' && (selectedId === "" || v.ram_id === selectedId)) currentCatStock++;
+                    });
                 }
-                list.innerHTML = `<div class="p-4 glass rounded-xl text-center w-full col-span-2 text-xs font-bold ${count > 0 ? 'text-green-400' : 'text-red-400'}">
-                    STOCK TERSEDIA: ${count} SERVER
-                </div>`;
+                const info = document.getElementById('stock-info');
+                info.innerText = currentCatStock > 0 ? `STOK: ${currentCatStock} UNIT` : "STOK HABIS";
+                info.className = `text-[9px] px-3 py-1 rounded-full font-bold ${currentCatStock > 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`;
             });
         }
 
-        document.getElementById('btn-claim').onclick = async () => {
-            const q = query(ref(db, 'stok_akun'), orderByChild('status'), equalTo('available'), limitToFirst(1));
-            onValue(q, async (snap) => {
-                const modal = document.getElementById('custom-modal');
-                const mTitle = document.getElementById('modal-title');
-                const mContent = document.getElementById('modal-content');
+        // Claim Logic
+        document.getElementById('btn-claim').onclick = () => {
+            const currentSelectedId = selectedId;
+            const currentSelectedRam = selectedRam;
 
+            onValue(query(ref(db, 'stok_akun'), orderByChild('status'), equalTo('available')), async (snap) => {
+                const m = document.getElementById('custom-modal'), mI = document.getElementById('modal-icon'), mT = document.getElementById('modal-title'), mC = document.getElementById('modal-content');
+                
+                let foundKey = null, accData = null;
                 if (snap.exists()) {
-                    // JIKA STOK ADA
-                    const key = Object.keys(snap.val())[0];
-                    const acc = snap.val()[key];
-                    const claimData = { ...acc, ram: selectedRam, claimed_by: auth.currentUser.email, claimed_at: Date.now() };
-                    
-                    await update(ref(db, `stok_akun/${key}`), { status: 'used' });
-                    await push(ref(db, 'history_klaim'), claimData);
-
-                    mTitle.innerText = "Claim Success!";
-                    mContent.innerHTML = `<p class="font-mono text-sm">User: ${acc.username}<br>Pass: ${acc.password}</p>`;
-                } else {
-                    // JIKA STOK HABIS -> MASUK ANTREAN
-                    await push(ref(db, 'antrean'), {
-                        email: auth.currentUser.email,
-                        ram: selectedRam,
-                        timestamp: Date.now()
+                    snap.forEach((child) => {
+                        if (child.val().ram_id === currentSelectedId && !foundKey) {
+                            foundKey = child.key; accData = child.val();
+                        }
                     });
-                    mTitle.innerText = "Masuk Antrean!";
-                    mContent.innerHTML = `<p class="text-sm">Stok sedang kosong. Kamu sudah masuk daftar antrean otomatis. Cek berkala di dashboard!</p>`;
                 }
-                modal.classList.remove('hidden');
+
+                if (foundKey) {
+                    await update(ref(db, `stok_akun/${foundKey}`), { status: 'used' });
+                    await push(ref(db, 'history_klaim'), { ...accData, ram: currentSelectedRam, claimed_by: auth.currentUser.email, claimed_at: Date.now() });
+                    mI.innerHTML = "✅"; mI.className = "w-16 h-16 rounded-3xl mx-auto mb-6 bg-green-500/20 text-green-400 flex items-center justify-center";
+                    mT.innerText = "CLAIM BERHASIL"; mC.innerHTML = `Akun <b>${currentSelectedRam}</b> berhasil diamankan. Silahkan cek di menu <b>Daftar Akun Saya</b>.`;
+                } else {
+                    // Antrean Prioritas
+                    await push(ref(db, 'antrean'), { 
+                        email: auth.currentUser.email, 
+                        ram_id: currentSelectedId, 
+                        ram_label: currentSelectedRam, 
+                        time: Date.now(), 
+                        priority: true 
+                    });
+                    mI.innerHTML = "⏳"; mI.className = "w-16 h-16 rounded-3xl mx-auto mb-6 bg-yellow-500/20 text-yellow-400 flex items-center justify-center";
+                    mT.innerText = "PENDING PRIORITAS"; mC.innerHTML = `Stok RAM <b>${currentSelectedRam}</b> saat ini kosong. Karena sudah mengerjakan iklan, Anda masuk <b>ANTREAN PRIORITAS</b>. Akun akan dikirim otomatis saat restok.`;
+                }
+                m.classList.remove('hidden');
+                
+                // Reset UI
+                currentAds = 0; selectedRam = ""; selectedId = "";
+                document.querySelectorAll('.ram-btn').forEach(b => b.classList.remove('active'));
+                const cBtn = document.getElementById('btn-claim');
+                cBtn.disabled = true;
+                cBtn.className = "w-full py-4 bg-slate-800 text-slate-500 rounded-xl font-black text-sm cursor-not-allowed";
+                document.getElementById('ad-count-text').innerText = "0";
+                document.getElementById('ad-instruction').innerText = "Pilih RAM Terlebih Dahulu";
             }, { onlyOnce: true });
         };
     </script>
