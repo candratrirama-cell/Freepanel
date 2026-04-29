@@ -13,9 +13,19 @@
         .ram-btn { border: 1px solid #334155; cursor: pointer; text-align: center; border-radius: 12px; padding: 14px; transition: 0.2s; background: #1e293b; }
         .ram-btn.active { border-color: #818cf8; background: #312e81; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
         .modal-bg { background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); }
+        
+        /* Tambahan Style Maintenance */
+        #mt-overlay { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
     </style>
 </head>
 <body class="p-4 flex flex-col items-center min-h-screen">
+
+    <div id="mt-overlay">
+        <div class="w-24 h-24 bg-indigo-500/10 text-indigo-400 rounded-3xl flex items-center justify-center text-5xl mb-6 shadow-2xl animate-pulse">🛠</div>
+        <h1 class="text-3xl font-black italic text-white mb-2">Ptefree Sedang Perbaikan</h1>
+        <p class="text-slate-400 text-sm max-w-xs mb-8 leading-relaxed">Mohon menunggu sebentar, sistem sedang dioptimalkan untuk kenyamanan Anda.</p>
+        <a href="https://whatsapp.com/channel/0029Vb76MVVHrDZenj4Tw92Y" class="bg-[#25D366] text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-green-500/20 active:scale-95 transition-all">Follow Saluran WhatsApp</a>
+    </div>
 
     <div class="w-full max-w-2xl">
         <div class="text-center my-10">
@@ -39,7 +49,6 @@
             </div>
 
             <div id="page-gen" class="space-y-4">
-                <!-- DESKRIPSI PANEL PTERODACTYL & TOMBOL WHATSAPP -->
                 <div class="card p-6 border-b-4 border-green-500 shadow-xl">
                     <div class="flex flex-col items-center text-center space-y-4">
                         <div>
@@ -49,11 +58,9 @@
                         <p class="text-[11px] text-slate-400 leading-relaxed">
                             Dapatkan Panel Pterodactyl <span class="text-green-400 font-bold">GRATIS</span> untuk menjalankan Node.js, 
                             bot WhatsApp, Telegram, atau source code lainnya. 
-                            Cocok untuk development dan production skala kecil.
                         </p>
                         <a href="https://whatsapp.com/channel/0029Vb76MVVHrDZenj4Tw92Y" target="_blank" 
                            class="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20b859] text-white font-black py-3 px-6 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg shadow-green-500/30 active:scale-95">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.032 2.001c-5.52 0-10 4.48-10 10 0 1.792.474 3.475 1.302 4.93L2 22l5.188-1.346c1.334.703 2.872 1.082 4.5 1.082 5.52 0 10-4.48 10-10s-4.48-10-10-10z" fill="currentColor"/><path d="M12.032 4.001c4.418 0 8 3.582 8 8s-3.582 8-8 8c-1.456 0-2.86-.394-4.062-1.075l-.467-.276-2.985.775.79-2.873-.295-.477A7.91 7.91 0 0 1 4.032 12c0-4.418 3.582-8 8-8z" fill="#25D366"/><path d="M16.126 14.357c-.226.646-.976 1.146-1.617 1.27-.536.104-1.142.16-2.166-.302-1.505-.68-2.82-2.226-3.244-3.09-.424-.865-.716-1.657-.74-2.326-.024-.67.274-1.167.58-1.528.232-.275.514-.42.756-.42.18 0 .36.023.523.068.176.05.367.154.555.45.234.37.61 1.093.686 1.223.076.13.104.284.031.448-.073.164-.152.276-.27.444-.118.168-.212.28-.338.45-.112.135-.226.277-.104.522.122.246.536.94 1.148 1.518.79.75 1.456 1.01 1.707 1.115.2.084.438.056.584-.11.146-.166.35-.426.51-.626.16-.2.306-.26.506-.154.2.106 1.028.5 1.17.598.142.098.23.146.28.244.05.098.05.312-.03.576z" fill="#FFF"/></svg>
                             Join Saluran WhatsApp Kami
                         </a>
                         <p class="text-[9px] text-slate-500">Dapatkan info terbaru & support seputar panel</p>
@@ -124,6 +131,17 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
+
+        // CEK STATUS MAINTENANCE DARI TELEGRAM (/ON /OFF)
+        onValue(ref(db, 'settings/maintenance'), (snap) => {
+            const isOff = snap.val();
+            const overlay = document.getElementById('mt-overlay');
+            if(isOff) {
+                overlay.style.display = 'flex';
+            } else {
+                overlay.style.display = 'none';
+            }
+        });
 
         let targetAds = 0, currentAds = 0, selectedRam = "", selectedId = "";
         const adLink = "https://widthwidowzoology.com/vmsuxp7mg0?key=e69a17094ebdb4761ca5607561ac9184";
@@ -233,10 +251,8 @@
             const m = document.getElementById('custom-modal'), mI = document.getElementById('modal-icon'), mT = document.getElementById('modal-title'), mC = document.getElementById('modal-content');
 
             try {
-                // Gunakan Database Reference Langsung untuk performa lebih stabil
                 const stockRef = ref(db, 'stok_akun');
                 const snap = await get(stockRef);
-                
                 let targetKey = null, accData = null;
                 
                 if (snap.exists()) {
@@ -252,28 +268,22 @@
 
                 if (targetKey && accData) {
                     const finalData = { ...accData, ram: curRam, claimed_by: email, claimed_at: Date.now() };
-                    // Simpan ke riwayat dulu
                     await push(ref(db, 'history_klaim'), finalData);
-                    // Tandai stok sebagai terpakai
                     await update(ref(db, `stok_akun/${targetKey}`), { status: 'used' });
-
                     mI.innerHTML = "✅"; mI.className = "w-20 h-20 rounded-3xl mx-auto mb-8 bg-green-500/10 text-green-400 flex items-center justify-center shadow-lg";
                     mT.innerText = "BERHASIL"; mC.innerHTML = `Akun <b>${curRam}</b> telah ditambahkan ke database Anda.`;
                 } else {
                     const pendingData = { ram: curRam, ram_id: curId, claimed_by: email, claimed_at: Date.now(), priority: true };
-                    
                     await push(ref(db, 'history_klaim'), pendingData);
                     await push(ref(db, 'antrean'), pendingData);
-
                     mI.innerHTML = "⏳"; mI.className = "w-20 h-20 rounded-3xl mx-auto mb-8 bg-yellow-500/10 text-yellow-500 flex items-center justify-center shadow-lg";
                     mT.innerText = "ANTREAN"; mC.innerHTML = `Stok RAM <b>${curRam}</b> habis. Anda masuk antrean prioritas. Akun akan muncul otomatis saat admin restok.`;
                 }
-                
                 m.classList.remove('hidden');
                 resetUI();
             } catch (err) {
                 console.error("Firebase Error:", err);
-                alert("Koneksi Firebase bermasalah. Pastikan internet stabil.");
+                alert("Koneksi Firebase bermasalah.");
             }
         };
 
