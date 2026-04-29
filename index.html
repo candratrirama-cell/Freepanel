@@ -2,137 +2,268 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PteGame - GoR 1.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #4F46E5; --bg: #F0F4F8; }
-        body { background: var(--bg); color: #2D3748; font-family: 'Quicksand', sans-serif; }
-        .game-font { font-family: 'Fredoka One', cursive; }
-        .game-card { background: white; border-radius: 24px; box-shadow: 0 8px 0 #CBD5E0; border: 2px solid #E2E8F0; }
-        .nav-btn { flex: 1; padding: 12px; text-align: center; font-weight: 700; border-radius: 16px; transition: 0.2s; cursor: pointer; color: #718096; }
-        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 0 #3730A3; }
-        .pts-badge { background: #FFD700; color: #856404; padding: 4px 12px; border-radius: 99px; border: 2px solid #F6E05E; }
-        .btn-game { background: #48BB78; color: white; border-bottom: 4px solid #2F855A; border-radius: 16px; transition: 0.1s; }
-        .btn-game:active { transform: translateY(4px); border-bottom-width: 0; }
-        .ram-item { display: flex; align-items: center; padding: 15px; border-radius: 20px; background: #F7FAFC; border: 2px solid #EDF2F7; margin-bottom: 10px; cursor: pointer; }
-        .ram-item.disabled { opacity: 0.5; cursor: not-allowed; background: #E2E8F0; }
-        #mt-overlay { position: fixed; inset: 0; background: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        :root {
+            --primary: #6366f1;
+            --secondary: #f8fafc;
+            --accent: #fbbf24;
+            --bg: #ffffff;
+        }
+        
+        body { 
+            background: #f1f5f9; 
+            color: #1e293b; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden; /* Prevent scrolling outside tabs */
+        }
+
+        /* Navigasi Bawah */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 50;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #94a3b8;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 10px;
+            gap: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.3s;
+        }
+
+        .nav-item.active .nav-icon {
+            transform: scale(1.2);
+        }
+
+        /* Container Halaman */
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            padding: 20px;
+            padding-top: 80px; /* Space for header */
+            padding-bottom: 90px; /* Space for nav */
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            overflow-y: auto;
+        }
+
+        .page.hidden-left { transform: translateX(-100%); opacity: 0; }
+        .page.hidden-right { transform: translateX(100%); opacity: 0; }
+        .page.active { transform: translateX(0); opacity: 1; }
+
+        /* Kartu & Tombol ala Game */
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .btn-game {
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: 800;
+            text-align: center;
+            box-shadow: 0 4px 0 #4338ca;
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+
+        .btn-game:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #4338ca;
+        }
+
+        .pts-badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            border: 1px solid #fde68a;
+        }
+
+        /* Item Tukar */
+        .trade-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            border-radius: 18px;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+
+        .trade-item:active { border-color: var(--primary); background: #eff6ff; }
+
+        #mt-overlay {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
     </style>
 </head>
-<body class="p-4 flex justify-center">
+<body>
 
     <div id="mt-overlay">
-        <h1 class="game-font text-3xl text-indigo-600 mb-4" id="ov-title">MAINTENANCE</h1>
-        <p class="mb-6 px-10 text-slate-500" id="ov-desc">Sabar ya, lagi restok/perbaikan...</p>
-        <a href="https://whatsapp.com/channel/0029Vb76MVVHrDZenj4Tw92Y" class="btn-game px-6 py-3">CEK SALURAN</a>
+        <div class="animate-bounce mb-6 text-6xl">📦</div>
+        <h1 class="font-extrabold text-2xl mb-2" id="ov-title">MAINTENANCE</h1>
+        <p class="text-slate-400 text-sm mb-8" id="ov-desc">Sedang merapikan database...</p>
+        <a href="https://whatsapp.com/channel/0029Vb76MVVHrDZenj4Tw92Y" class="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold">INFO SALURAN</a>
     </div>
 
-    <div class="w-full max-w-md">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h1 class="game-font text-2xl text-indigo-600 tracking-wide">PteGame</h1>
-                <p class="text-[10px] font-bold text-slate-400">VERSION GOR 1.1</p>
-            </div>
-            <div id="user-pts-display" class="hidden pts-badge game-font">0 PTS</div>
+    <header class="fixed top-0 left-0 right-0 p-5 bg-white/80 backdrop-blur-md z-40 flex justify-between items-center border-bottom border-slate-100">
+        <div>
+            <h1 class="font-extrabold text-xl tracking-tight text-indigo-600">GoR 1.1</h1>
         </div>
+        <div id="pts-display" class="pts-badge hidden">0 PTS</div>
+    </header>
 
-        <div id="login-section" class="game-card p-8 text-center mt-10">
-            <div class="text-5xl mb-4">🎮</div>
-            <h2 class="game-font text-xl mb-2">Ready to Play?</h2>
-            <p class="text-sm text-slate-500 mb-6">Login untuk mulai mengumpulkan poin dan tukar panel.</p>
-            <button id="btn-login" class="btn-game w-full py-4 game-font">MASUK DENGAN GOOGLE</button>
-        </div>
-
-        <div id="app-section" class="hidden space-y-4">
-            <div class="game-card p-2 flex gap-2">
-                <div id="nav-1" class="nav-btn active">KUMPULKAN</div>
-                <div id="nav-2" class="nav-btn">TUKARKAN</div>
-                <div id="nav-3" class="nav-btn">AKUN</div>
-            </div>
-
-            <div id="tab-content-1" class="space-y-4">
-                <div class="game-card p-6 text-center">
-                    <div class="text-4xl mb-2">💎</div>
-                    <h3 class="game-font text-lg">Poin Hunter</h3>
-                    <p class="text-xs text-slate-400 mb-6">1 Iklan = 1 PTS. Kumpulkan yang banyak!</p>
-                    <button id="btn-watch" class="btn-game w-full py-5 text-lg game-font">TAP IKLAN (+1 PTS)</button>
-                </div>
-            </div>
-
-            <div id="tab-content-2" class="hidden space-y-3">
-                <div id="ram-list">
-                    <div class="ram-item" onclick="confirmTrade('1', 10, '1GB')">
-                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-12 h-12 mr-4">
-                        <div class="flex-1">
-                            <h4 class="game-font text-indigo-600">RAM 1GB</h4>
-                            <p class="text-[10px] font-bold text-slate-400">STOK: <span id="s-1">...</span></p>
-                        </div>
-                        <div class="pts-badge text-xs font-bold">10 PTS</div>
-                    </div>
-                    <div class="ram-item" onclick="confirmTrade('2', 25, '5GB')">
-                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-12 h-12 mr-4">
-                        <div class="flex-1">
-                            <h4 class="game-font text-indigo-600">RAM 5GB</h4>
-                            <p class="text-[10px] font-bold text-slate-400">STOK: <span id="s-2">...</span></p>
-                        </div>
-                        <div class="pts-badge text-xs font-bold">25 PTS</div>
-                    </div>
-                    <div class="ram-item" onclick="confirmTrade('3', 40, '8GB')">
-                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-12 h-12 mr-4">
-                        <div class="flex-1">
-                            <h4 class="game-font text-indigo-600">RAM 8GB</h4>
-                            <p class="text-[10px] font-bold text-slate-400">STOK: <span id="s-3">...</span></p>
-                        </div>
-                        <div class="pts-badge text-xs font-bold">40 PTS</div>
-                    </div>
-                    <div class="ram-item" onclick="confirmTrade('4', 50, '9GB')">
-                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-12 h-12 mr-4">
-                        <div class="flex-1">
-                            <h4 class="game-font text-indigo-600">RAM 9GB</h4>
-                            <p class="text-[10px] font-bold text-slate-400">STOK: <span id="s-4">...</span></p>
-                        </div>
-                        <div class="pts-badge text-xs font-bold">50 PTS</div>
-                    </div>
-                    <div class="ram-item border-yellow-400 bg-yellow-50" onclick="confirmTrade('5', 70, 'Unlimited')">
-                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-12 h-12 mr-4">
-                        <div class="flex-1">
-                            <h4 class="game-font text-yellow-600">UNLIMITED</h4>
-                            <p class="text-[10px] font-bold text-slate-400">STOK: <span id="s-5">...</span></p>
-                        </div>
-                        <div class="pts-badge text-xs font-bold">70 PTS</div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-content-3" class="hidden space-y-4">
-                <div class="game-card p-6">
-                    <div class="flex items-center gap-4 mb-4">
-                        <img id="user-img" src="" class="w-12 h-12 rounded-full border-2 border-indigo-500">
-                        <div>
-                            <p id="user-name" class="game-font text-indigo-600">-</p>
-                            <p id="user-login-time" class="text-[10px] text-slate-400">Login: -</p>
-                        </div>
-                    </div>
-                    <hr class="mb-4">
-                    <h5 class="game-font text-sm mb-3">RIWAYAT PANEL</h5>
-                    <div id="history-list" class="space-y-2 text-xs text-slate-500">
-                        Belum ada riwayat.
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div id="login-section" class="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center p-10 text-center">
+        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-24 h-24 mb-6">
+        <h2 class="font-extrabold text-2xl mb-2">Selamat Datang!</h2>
+        <p class="text-sm text-slate-400 mb-10 leading-relaxed">Kumpulkan poin dengan mudah untuk mendapatkan akses Panel Pterodactyl Gratis.</p>
+        <button id="btn-login" class="btn-game w-full">MASUK DENGAN GOOGLE</button>
     </div>
 
-    <div id="modal-confirm" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-6 z-[100]">
-        <div class="game-card p-8 w-full max-w-xs text-center">
-            <div class="text-4xl mb-4">❓</div>
-            <h3 class="game-font text-lg mb-2">Anda Yakin?</h3>
-            <p id="modal-text" class="text-sm text-slate-500 mb-6"></p>
-            <div class="flex gap-2">
-                <button onclick="closeModal()" class="flex-1 py-3 bg-slate-200 rounded-xl font-bold">Batal</button>
-                <button id="btn-confirm-yes" class="flex-1 py-3 btn-game font-bold">Yakin!</button>
+    <div id="app-section" class="hidden">
+        
+        <div id="page-1" class="page active">
+            <div class="game-card p-8 text-center mb-6">
+                <div class="text-5xl mb-4">💎</div>
+                <h3 class="font-extrabold text-lg mb-1">Poin Hunter</h3>
+                <p class="text-xs text-slate-400 mb-8">Tap tombol di bawah untuk mendapatkan 1 poin per iklan.</p>
+                <button id="btn-watch" class="btn-game w-full flex items-center justify-center gap-3">
+                    <span>TAP IKLAN</span>
+                    <span class="bg-white/20 px-2 py-0.5 rounded text-[10px]">+1 PTS</span>
+                </button>
+            </div>
+            
+            <div class="p-6 bg-blue-50 rounded-2xl border border-blue-100">
+                <h4 class="font-bold text-blue-700 text-sm mb-2">💡 Tips Cepat</h4>
+                <p class="text-[11px] text-blue-600/80 leading-relaxed">Poin otomatis masuk setelah iklan terbuka. Jangan lupa join saluran untuk info restok tercepat!</p>
+            </div>
+        </div>
+
+        <div id="page-2" class="page hidden-right">
+            <h3 class="font-extrabold text-lg mb-6">Tukarkan Poin</h3>
+            <div id="trade-list" class="space-y-3">
+                <div class="trade-item" onclick="handleTrade('1', 10, '1GB')">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 shadow-sm">
+                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-8 h-8">
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-bold text-sm">Panel 1GB</p>
+                        <p class="text-[10px] text-slate-400">Stok: <span id="s-1">0</span></p>
+                    </div>
+                    <div class="font-extrabold text-indigo-600 text-sm">10 PTS</div>
+                </div>
+                <div class="trade-item" onclick="handleTrade('2', 25, '5GB')">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 shadow-sm"><img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-8 h-8"></div>
+                    <div class="flex-1"><p class="font-bold text-sm">Panel 5GB</p><p class="text-[10px] text-slate-400">Stok: <span id="s-2">0</span></p></div>
+                    <div class="font-extrabold text-indigo-600 text-sm">25 PTS</div>
+                </div>
+                <div class="trade-item" onclick="handleTrade('3', 40, '8GB')">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 shadow-sm"><img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-8 h-8"></div>
+                    <div class="flex-1"><p class="font-bold text-sm">Panel 8GB</p><p class="text-[10px] text-slate-400">Stok: <span id="s-3">0</span></p></div>
+                    <div class="font-extrabold text-indigo-600 text-sm">40 PTS</div>
+                </div>
+                <div class="trade-item" onclick="handleTrade('4', 50, '9GB')">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 shadow-sm"><img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-8 h-8"></div>
+                    <div class="flex-1"><p class="font-bold text-sm">Panel 9GB</p><p class="text-[10px] text-slate-400">Stok: <span id="s-4">0</span></p></div>
+                    <div class="font-extrabold text-indigo-600 text-sm">50 PTS</div>
+                </div>
+                <div class="trade-item bg-amber-50 border-amber-100" onclick="handleTrade('5', 70, 'Unlimited')">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-4 shadow-sm"><img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-8 h-8"></div>
+                    <div class="flex-1"><p class="font-bold text-sm text-amber-700">Unlimited</p><p class="text-[10px] text-slate-400">Stok: <span id="s-5">0</span></p></div>
+                    <div class="font-extrabold text-amber-600 text-sm">70 PTS</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-3" class="page hidden-right">
+            <div class="game-card p-6 mb-6 flex items-center gap-4">
+                <img id="u-img" src="" class="w-14 h-14 rounded-full border-4 border-indigo-50">
+                <div>
+                    <p id="u-name" class="font-extrabold text-indigo-600">-</p>
+                    <p id="u-login" class="text-[10px] text-slate-400">Login: -</p>
+                </div>
+            </div>
+            
+            <h4 class="font-extrabold text-sm mb-4 flex items-center gap-2">
+                <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span> Riwayat Akun
+            </h4>
+            <div id="history-list" class="space-y-3">
+                <p class="text-center py-10 text-xs text-slate-400">Belum ada aktivitas.</p>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showPage(1)">
+                <svg class="nav-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm3.23 15.39L12 15.45l-3.22 1.94a.5.5 0 01-.74-.54l.85-3.66-2.83-2.45a.5.5 0 01.28-.88l3.74-.32 1.46-3.45a.5.5 0 01.92 0l1.46 3.45 3.74.32a.5.5 0 01.28.88l-2.83 2.45.85 3.66a.5.5 0 01-.74.54z"/></svg>
+                <span>Earn</span>
+            </div>
+            <div class="nav-item" onclick="showPage(2)">
+                <svg class="nav-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0019 7H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                <span>Shop</span>
+            </div>
+            <div class="nav-item" onclick="showPage(3)">
+                <svg class="nav-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                <span>User</span>
+            </div>
+        </nav>
+    </div>
+
+    <div id="dialog" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-xs rounded-3xl p-8 text-center shadow-2xl scale-95 opacity-0 transition-all duration-300" id="dialog-box">
+            <div class="text-4xl mb-4">🛒</div>
+            <h3 class="font-extrabold text-xl mb-2">Konfirmasi</h3>
+            <p id="dialog-text" class="text-xs text-slate-400 mb-8"></p>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="closeDialog()" class="py-4 bg-slate-100 rounded-2xl font-bold text-sm">Batal</button>
+                <button id="btn-confirm" class="py-4 bg-indigo-600 text-white rounded-2xl font-bold text-sm">Tukar</button>
             </div>
         </div>
     </div>
@@ -157,130 +288,122 @@
         const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
 
-        let userPoints = 0;
-        let selectedTrade = null;
+        let curPoints = 0, selectedItem = null, curPage = 1;
 
-        // AUTH
+        // Navigasi Page Logic
+        window.showPage = (num) => {
+            if(num === curPage) return;
+            const dir = num > curPage ? 'right' : 'left';
+            const oldPage = document.getElementById(`page-${curPage}`);
+            const newPage = document.getElementById(`page-${num}`);
+            
+            document.querySelectorAll('.nav-item').forEach((it, i) => {
+                it.classList.toggle('active', i + 1 === num);
+            });
+
+            oldPage.className = `page hidden-${dir === 'right' ? 'left' : 'right'}`;
+            newPage.className = `page active`;
+            curPage = num;
+        };
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('app-section').classList.remove('hidden');
-                document.getElementById('user-pts-display').classList.remove('hidden');
+                document.getElementById('pts-display').classList.remove('hidden');
+                document.getElementById('u-img').src = user.photoURL;
+                document.getElementById('u-name').innerText = user.displayName;
+                document.getElementById('u-login').innerText = "Login: " + new Date().toLocaleTimeString();
                 
-                document.getElementById('user-img').src = user.photoURL;
-                document.getElementById('user-name').innerText = user.displayName;
-                document.getElementById('user-login-time').innerText = "Login: " + new Date().toLocaleTimeString();
-                
-                loadUserData(user.uid);
-                syncStok();
-                syncHistory(user.email);
+                loadPoints(user.uid);
+                loadStok();
+                loadHistory(user.email);
             }
         });
 
         document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
 
-        // DATA USER (POINTS)
-        function loadUserData(uid) {
-            onValue(ref(db, `users/${uid}/points`), (snap) => {
-                userPoints = snap.val() || 0;
-                document.getElementById('user-pts-display').innerText = userPoints + " PTS";
+        function loadPoints(uid) {
+            onValue(ref(db, `users/${uid}/points`), (s) => {
+                curPoints = s.val() || 0;
+                document.getElementById('pts-display').innerText = curPoints + " PTS";
             });
         }
 
-        // KUMPULKAN PTS
         document.getElementById('btn-watch').onclick = () => {
             window.open("https://widthwidowzoology.com/vmsuxp7mg0?key=e69a17094ebdb4761ca5607561ac9184", "_blank");
-            const uid = auth.currentUser.uid;
-            set(ref(db, `users/${uid}/points`), userPoints + 1);
+            set(ref(db, `users/${auth.currentUser.uid}/points`), curPoints + 1);
         };
 
-        // NAV LOGIC
-        const tabs = [1, 2, 3];
-        tabs.forEach(t => {
-            document.getElementById(`nav-${t}`).onclick = () => {
-                tabs.forEach(x => {
-                    document.getElementById(`nav-${x}`).classList.remove('active');
-                    document.getElementById(`tab-content-${x}`).classList.add('hidden');
-                });
-                document.getElementById(`nav-${t}`).classList.add('active');
-                document.getElementById(`tab-content-${t}`).classList.remove('hidden');
-            }
-        });
-
-        // STOK MONITORING
-        function syncStok() {
-            onValue(ref(db, 'stok_akun'), (snap) => {
-                const data = snap.val() || {};
-                const counts = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
-                Object.values(data).forEach(v => { if(v.status === 'available') counts[v.ram_id]++; });
-                for(let i=1; i<=5; i++) document.getElementById(`s-${i}`).innerText = counts[i];
-            });
-        }
-
-        // TRADE LOGIC
-        window.confirmTrade = (id, price, label) => {
-            if (userPoints < price) return alert("Poin tidak cukup!");
-            selectedTrade = { id, price, label };
-            document.getElementById('modal-text').innerText = `Tukarkan ${price} PTS dengan Panel ${label}?`;
-            document.getElementById('modal-confirm').classList.remove('hidden');
-        };
-
-        window.closeModal = () => document.getElementById('modal-confirm').classList.add('hidden');
-
-        document.getElementById('btn-confirm-yes').onclick = async () => {
-            const { id, price, label } = selectedTrade;
-            const uid = auth.currentUser.uid;
-            const email = auth.currentUser.email;
-
-            const snap = await get(ref(db, 'stok_akun'));
-            let targetKey = null, acc = null;
-            if (snap.exists()) {
-                const all = snap.val();
-                targetKey = Object.keys(all).find(k => all[k].status === 'available' && all[k].ram_id === id);
-                if (targetKey) acc = all[targetKey];
-            }
-
-            if (!targetKey) {
-                alert("Yah, stok baru saja habis!");
-            } else {
-                // Potong Poin
-                await set(ref(db, `users/${uid}/points`), userPoints - price);
-                // Pindah ke history
-                await push(ref(db, 'history_klaim'), { ...acc, ram: label, claimed_by: email, claimed_at: Date.now() });
-                // Tandai stok used
-                await update(ref(db, `stok_akun/${targetKey}`), { status: 'used' });
-                alert("🎉 Berhasil! Cek menu AKUN.");
-            }
-            closeModal();
-        };
-
-        function syncHistory(email) {
-            onValue(ref(db, 'history_klaim'), (snap) => {
-                const list = document.getElementById('history-list');
-                list.innerHTML = "";
-                if (snap.exists()) {
-                    Object.values(snap.val()).forEach(item => {
-                        if (item.claimed_by === email) {
-                            list.innerHTML += `
-                            <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
-                                <p class="font-bold text-indigo-600">${item.ram} PANEL</p>
-                                <p>U: ${item.username} | P: ${item.password}</p>
-                            </div>`;
-                        }
-                    });
+        function loadStok() {
+            onValue(ref(db, 'stok_akun'), (s) => {
+                const data = s.val() || {};
+                const counts = { '1':0, '2':0, '3':0, '4':0, '5':0 };
+                Object.values(data).forEach(v => { if(v.status==='available') counts[v.ram_id]++; });
+                for(let i=1; i<=5; i++) {
+                    const el = document.getElementById(`s-${i}`);
+                    if(el) el.innerText = counts[i];
                 }
             });
         }
 
-        // MAINTENANCE MONITOR
-        onValue(ref(db, 'settings'), (snap) => {
-            const d = snap.val() || {};
-            const ov = document.getElementById('mt-overlay');
-            if(d.maintenance || d.restok_mode) {
-                ov.style.display = 'flex';
-                document.getElementById('ov-title').innerText = d.maintenance ? "MAINTENANCE" : "RESTOKING...";
-            } else { ov.style.display = 'none'; }
-        });
-    </script>
-</body>
-</html>
+        window.handleTrade = (id, price, label) => {
+            if(curPoints < price) return alert("Poin kamu kurang!");
+            selectedItem = { id, price, label };
+            document.getElementById('dialog-text').innerText = `Gunakan ${price} PTS untuk Panel ${label}?`;
+            const d = document.getElementById('dialog');
+            d.classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('dialog-box').classList.remove('scale-95', 'opacity-0');
+            }, 10);
+        };
+
+        window.closeDialog = () => {
+            document.getElementById('dialog-box').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => document.getElementById('dialog').classList.add('hidden'), 300);
+        };
+
+        document.getElementById('btn-confirm').onclick = async () => {
+            const { id, price, label } = selectedItem;
+            const uid = auth.currentUser.uid;
+            const email = auth.currentUser.email;
+
+            const snap = await get(ref(db, 'stok_akun'));
+            let key = null, acc = null;
+            if(snap.exists()){
+                key = Object.keys(snap.val()).find(k => snap.val()[k].status === 'available' && snap.val()[k].ram_id === id);
+                if(key) acc = snap.val()[key];
+            }
+
+            if(!key) {
+                alert("Maaf, stok habis!");
+            } else {
+                await set(ref(db, `users/${uid}/points`), curPoints - price);
+                await push(ref(db, 'history_klaim'), { ...acc, ram: label, claimed_by: email, claimed_at: Date.now() });
+                await update(ref(db, `stok_akun/${key}`), { status: 'used' });
+                alert("Tukar Berhasil! Cek tab User.");
+            }
+            closeDialog();
+        };
+
+        function loadHistory(email) {
+            onValue(ref(db, 'history_klaim'), (s) => {
+                const list = document.getElementById('history-list');
+                list.innerHTML = "";
+                if(s.exists()){
+                    Object.values(s.val()).forEach(it => {
+                        if(it.claimed_by === email) {
+                            list.innerHTML += `
+                            <div class="p-4 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-bold text-xs text-indigo-600">${it.ram} Panel</span>
+                                    <span class="text-[9px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">SUCCESS</span>
+                                </div>
+                                <div class="text-[10px] text-slate-500 font-mono">
+                                    U: ${it.username}<br>P: ${it.password}
+                                </div>
+                            </div>`;
+                        }
+                    });
+                } else {
+                    list.innerHTML = `<p class="text-center
