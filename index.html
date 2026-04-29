@@ -48,7 +48,7 @@
                 <div class="card p-6 border-b-4 border-indigo-500 shadow-xl">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="font-black text-[10px] uppercase text-indigo-300">Konfigurasi</h3>
-                        <div id="stock-info" class="text-[9px] px-3 py-1 bg-slate-800 rounded-full font-bold">Loading...</div>
+                        <div id="stock-info" class="text-[9px] px-3 py-1 bg-slate-800 rounded-full font-bold">PILIH RAM</div>
                     </div>
                     
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8" id="ram-container">
@@ -97,25 +97,26 @@
         let targetAds = 0, currentAds = 0, selectedRam = "", selectedId = "";
         const adLink = "https://widthwidowzoology.com/vmsuxp7mg0?key=e69a17094ebdb4761ca5607561ac9184";
 
-        // MASTER MONITOR (RAM STATUS & STOK)
         function updateUIRam() {
-            get(ref(db, 'settings/ram_status')).then(statusSnap => {
+            onValue(ref(db, 'settings/ram_status'), (statusSnap) => {
                 const manualStatus = statusSnap.val() || {};
                 onValue(ref(db, 'stok_akun'), (stokSnap) => {
                     const allStok = stokSnap.val() || {};
                     const counts = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
-                    Object.values(allStok).forEach(v => { if(v.status === 'available') counts[v.ram_id]++; });
+                    Object.values(allStok).forEach(v => { 
+                        if(v.status === 'available') counts[v.ram_id]++; 
+                    });
 
                     document.querySelectorAll('.ram-btn').forEach(btn => {
                         const id = btn.dataset.id;
-                        const isManualOff = manualStatus[id] === false;
-                        const isStokEmpty = counts[id] <= 0;
                         const label = btn.querySelector('.label-info');
+                        const isOff = manualStatus[id] === false;
+                        const isKosong = counts[id] <= 0;
 
-                        if (isManualOff) {
+                        if (isOff) {
                             btn.classList.add('btn-disabled');
                             label.innerHTML = "<b class='text-red-500'>OFF BY ADMIN</b>";
-                        } else if (isStokEmpty) {
+                        } else if (isKosong) {
                             btn.classList.add('btn-disabled');
                             label.innerHTML = "<b class='text-yellow-500'>KOSONG</b>";
                         } else {
@@ -123,13 +124,19 @@
                             label.innerText = `ID ${id} • ${btn.dataset.ads} Ads`;
                         }
                     });
-                    
-                    if(selectedId) {
+
+                    if (selectedId) {
                         const sCount = counts[selectedId];
-                        document.getElementById('stock-info').innerText = sCount > 0 ? `STOK: ${sCount} SERVER` : "STOK HABIS";
+                        const isSManualOff = manualStatus[selectedId] === false;
+                        
+                        if (isSManualOff) {
+                            document.getElementById('stock-info').innerText = "OFF BY ADMIN";
+                        } else {
+                            document.getElementById('stock-info').innerText = sCount > 0 ? `STOK: ${sCount} SERVER` : "STOK HABIS";
+                        }
                     }
                 });
-            });
+            }, { onlyOnce: false });
         }
 
         onValue(ref(db, 'settings'), (snap) => {
@@ -163,6 +170,7 @@
 
         document.querySelectorAll('.ram-btn').forEach(btn => {
             btn.onclick = () => {
+                if(btn.classList.contains('btn-disabled')) return;
                 document.querySelectorAll('.ram-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 selectedRam = btn.dataset.ram; selectedId = btn.dataset.id;
