@@ -3,103 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ptefree by @maramadhona</title>
+    <title>PteGame - GoR 1.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #0f172a; color: #f1f5f9; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .card { background: #1e293b; border: 1px solid #334155; border-radius: 1.25rem; }
-        .tab-btn { padding: 16px; font-weight: 800; font-size: 11px; text-transform: uppercase; transition: 0.3s; border-bottom: 3px solid transparent; width: 50%; text-align: center; cursor: pointer; color: #64748b; }
-        .tab-btn.active { color: #818cf8; border-color: #818cf8; background: rgba(99, 102, 241, 0.05); }
-        .ram-btn { border: 1px solid #334155; cursor: pointer; text-align: center; border-radius: 12px; padding: 14px; transition: 0.2s; background: #1e293b; }
-        .ram-btn.active { border-color: #818cf8; background: #312e81; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        .modal-bg { background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); }
-        #mt-overlay { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        :root { --primary: #4F46E5; --bg: #F0F4F8; }
+        body { background: var(--bg); color: #2D3748; font-family: 'Quicksand', sans-serif; }
+        .game-font { font-family: 'Fredoka One', cursive; }
+        .game-card { background: white; border-radius: 24px; box-shadow: 0 8px 0 #CBD5E0; border: 2px solid #E2E8F0; }
+        .nav-btn { flex: 1; padding: 12px; text-align: center; font-weight: 700; border-radius: 16px; transition: 0.2s; cursor: pointer; color: #718096; }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 0 #3730A3; }
+        .pts-badge { background: #FFD700; color: #856404; padding: 4px 12px; border-radius: 99px; border: 2px solid #F6E05E; }
+        .btn-game { background: #48BB78; color: white; border-bottom: 4px solid #2F855A; border-radius: 16px; transition: 0.1s; }
+        .btn-game:active { transform: translateY(4px); border-bottom-width: 0; }
+        .ram-item { display: flex; align-items: center; padding: 15px; border-radius: 20px; background: #F7FAFC; border: 2px solid #EDF2F7; margin-bottom: 10px; cursor: pointer; }
+        .ram-item.disabled { opacity: 0.5; cursor: not-allowed; background: #E2E8F0; }
+        #mt-overlay { position: fixed; inset: 0; background: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     </style>
 </head>
-<body class="p-4 flex flex-col items-center min-h-screen">
+<body class="p-4 flex justify-center">
 
     <div id="mt-overlay">
-        <div id="overlay-icon" class="w-24 h-24 bg-indigo-500/10 text-indigo-400 rounded-3xl flex items-center justify-center text-5xl mb-6 shadow-2xl animate-pulse">🛠</div>
-        <h1 id="overlay-title" class="text-3xl font-black italic text-white mb-2">Ptefree</h1>
-        <p id="overlay-desc" class="text-slate-400 text-sm max-w-xs mb-8 leading-relaxed"></p>
-        <a href="https://whatsapp.com/channel/0029Vb76MVVHrDZenj4Tw92Y" class="bg-[#25D366] text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-green-500/20 active:scale-95 transition-all">Follow Saluran WhatsApp</a>
+        <h1 class="game-font text-3xl text-indigo-600 mb-4" id="ov-title">MAINTENANCE</h1>
+        <p class="mb-6 px-10 text-slate-500" id="ov-desc">Sabar ya, lagi restok/perbaikan...</p>
+        <a href="https://whatsapp.com/channel/0029Vb76MVVHrDZenj4Tw92Y" class="btn-game px-6 py-3">CEK SALURAN</a>
     </div>
 
-    <div class="w-full max-w-2xl">
-        <div class="text-center my-10">
-            <h1 class="text-5xl font-black italic text-indigo-400 tracking-tighter italic">Ptefree</h1>
-            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em] mt-2">By @maramadhona</p>
+    <div class="w-full max-w-md">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="game-font text-2xl text-indigo-600 tracking-wide">PteGame</h1>
+                <p class="text-[10px] font-bold text-slate-400">VERSION GOR 1.1</p>
+            </div>
+            <div id="user-pts-display" class="hidden pts-badge game-font">0 PTS</div>
         </div>
 
-        <div id="login-section" class="card p-10 text-center max-w-sm mx-auto shadow-2xl border-t-4 border-indigo-500">
-            <h2 class="text-lg font-bold mb-2">Autentikasi Diperlukan</h2>
-            <p class="mb-8 text-xs text-slate-400">Gunakan akun Google untuk sinkronisasi riwayat akun Anda.</p>
-            <button id="btn-login" class="w-full bg-white text-black py-4 rounded-xl font-black flex items-center justify-center active:scale-95 transition shadow-lg">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-3"> MASUK DENGAN GOOGLE
-            </button>
+        <div id="login-section" class="game-card p-8 text-center mt-10">
+            <div class="text-5xl mb-4">🎮</div>
+            <h2 class="game-font text-xl mb-2">Ready to Play?</h2>
+            <p class="text-sm text-slate-500 mb-6">Login untuk mulai mengumpulkan poin dan tukar panel.</p>
+            <button id="btn-login" class="btn-game w-full py-4 game-font">MASUK DENGAN GOOGLE</button>
         </div>
 
-        <div id="app-section" class="hidden space-y-6">
-            <div class="card overflow-hidden flex shadow-2xl">
-                <div id="tab-gen" class="tab-btn active">1. Generate Account</div>
-                <div id="tab-list" class="tab-btn">2. Daftar Akun Saya</div>
+        <div id="app-section" class="hidden space-y-4">
+            <div class="game-card p-2 flex gap-2">
+                <div id="nav-1" class="nav-btn active">KUMPULKAN</div>
+                <div id="nav-2" class="nav-btn">TUKARKAN</div>
+                <div id="nav-3" class="nav-btn">AKUN</div>
             </div>
 
-            <div id="page-gen" class="space-y-4">
-                <div class="card p-6 border-b-4 border-green-500 shadow-xl text-center">
-                    <span class="text-[10px] font-bold uppercase text-green-400 tracking-widest bg-green-500/10 px-3 py-1 rounded-full mb-4 inline-block">✨ Info Gratis ✨</span>
-                    <h3 class="text-sm font-black text-slate-200 mb-2">Panel Pterodactyl Gratis</h3>
-                    <p class="text-[11px] text-slate-400 leading-relaxed mb-6">Dapatkan Panel GRATIS untuk menjalankan Bot WhatsApp, Telegram, atau Node.js.</p>
-                    <a href="https://whatsapp.com/channel/0029Vb76MVVHrDZenj4Tw92Y" target="_blank" class="bg-[#25D366] text-white font-black py-3 px-6 rounded-xl text-xs uppercase tracking-wider block mx-auto w-fit">Join Saluran WhatsApp</a>
-                </div>
-
-                <div class="card p-6 border-b-4 border-indigo-500 shadow-xl">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-black text-[10px] uppercase text-indigo-300 tracking-widest">Konfigurasi Instance</h3>
-                        <div id="stock-info" class="text-[9px] px-3 py-1 bg-slate-800 rounded-full font-bold">Menghubungkan...</div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
-                        <div class="ram-btn" data-ram="1GB" data-id="1" data-ads="5"><b>1GB</b><br><span class="text-[8px] opacity-60 uppercase">ID 1 • 5 Ads</span></div>
-                        <div class="ram-btn" data-ram="5GB" data-id="2" data-ads="20"><b>5GB</b><br><span class="text-[8px] opacity-60 uppercase">ID 2 • 20 Ads</span></div>
-                        <div class="ram-btn" data-ram="8GB" data-id="3" data-ads="30"><b>8GB</b><br><span class="text-[8px] opacity-60 uppercase">ID 3 • 30 Ads</span></div>
-                        <div class="ram-btn" data-ram="9GB" data-id="4" data-ads="35"><b>9GB</b><br><span class="text-[8px] opacity-60 uppercase">ID 4 • 35 Ads</span></div>
-                        <div class="ram-btn col-span-2" data-ram="UNLIMITED" data-id="5" data-ads="50"><b class="text-yellow-500">UNLIMITED</b><br><span class="text-[8px] opacity-60 uppercase">ID 5 • 50 Ads</span></div>
-                    </div>
-
-                    <div class="text-center p-8 bg-slate-900/80 rounded-2xl border border-slate-700/50">
-                        <p id="ad-count-text" class="text-5xl font-black text-indigo-400 mb-2">0</p>
-                        <p id="ad-instruction" class="text-[9px] text-slate-500 mb-8 uppercase font-bold tracking-widest">Silahkan Pilih RAM</p>
-                        <button id="btn-watch-ads" class="hidden w-full py-5 bg-indigo-600 rounded-xl font-black text-xs uppercase tracking-widest mb-4 animate-bounce shadow-lg shadow-indigo-500/40">OPEN ADSTERRA</button>
-                        <button id="btn-claim" class="w-full py-5 bg-slate-800 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest cursor-not-allowed" disabled>KLAIM SEKARANG</button>
-                    </div>
+            <div id="tab-content-1" class="space-y-4">
+                <div class="game-card p-6 text-center">
+                    <div class="text-4xl mb-2">💎</div>
+                    <h3 class="game-font text-lg">Poin Hunter</h3>
+                    <p class="text-xs text-slate-400 mb-6">1 Iklan = 1 PTS. Kumpulkan yang banyak!</p>
+                    <button id="btn-watch" class="btn-game w-full py-5 text-lg game-font">TAP IKLAN (+1 PTS)</button>
                 </div>
             </div>
 
-            <div id="page-list" class="hidden space-y-4">
-                <div class="card p-6 min-h-[350px] shadow-2xl">
-                    <h3 class="font-black text-[10px] uppercase text-green-400 mb-8 flex items-center tracking-widest">
-                        <span class="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse"></span> AKTIF (EXPIRE 24J)
-                    </h3>
-                    <div id="my-accounts-list" class="space-y-4 text-center py-20 text-[11px] text-slate-500 font-medium">Database sedang dimuat...</div>
+            <div id="tab-content-2" class="hidden space-y-3">
+                <div id="ram-list">
+                    <div class="ram-item" onclick="confirmTrade('1', 10, '1GB')">
+                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-12 h-12 mr-4">
+                        <div class="flex-1">
+                            <h4 class="game-font text-indigo-600">RAM 1GB</h4>
+                            <p class="text-[10px] font-bold text-slate-400">STOK: <span id="s-1">...</span></p>
+                        </div>
+                        <div class="pts-badge text-xs font-bold">10 PTS</div>
+                    </div>
+                    <div class="ram-item" onclick="confirmTrade('2', 25, '5GB')">
+                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-12 h-12 mr-4">
+                        <div class="flex-1">
+                            <h4 class="game-font text-indigo-600">RAM 5GB</h4>
+                            <p class="text-[10px] font-bold text-slate-400">STOK: <span id="s-2">...</span></p>
+                        </div>
+                        <div class="pts-badge text-xs font-bold">25 PTS</div>
+                    </div>
+                    <div class="ram-item" onclick="confirmTrade('3', 40, '8GB')">
+                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-12 h-12 mr-4">
+                        <div class="flex-1">
+                            <h4 class="game-font text-indigo-600">RAM 8GB</h4>
+                            <p class="text-[10px] font-bold text-slate-400">STOK: <span id="s-3">...</span></p>
+                        </div>
+                        <div class="pts-badge text-xs font-bold">40 PTS</div>
+                    </div>
+                    <div class="ram-item" onclick="confirmTrade('4', 50, '9GB')">
+                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-12 h-12 mr-4">
+                        <div class="flex-1">
+                            <h4 class="game-font text-indigo-600">RAM 9GB</h4>
+                            <p class="text-[10px] font-bold text-slate-400">STOK: <span id="s-4">...</span></p>
+                        </div>
+                        <div class="pts-badge text-xs font-bold">50 PTS</div>
+                    </div>
+                    <div class="ram-item border-yellow-400 bg-yellow-50" onclick="confirmTrade('5', 70, 'Unlimited')">
+                        <img src="https://pterodactyl.io/logos/pterodactyl_logo_transparent.png" class="w-12 h-12 mr-4">
+                        <div class="flex-1">
+                            <h4 class="game-font text-yellow-600">UNLIMITED</h4>
+                            <p class="text-[10px] font-bold text-slate-400">STOK: <span id="s-5">...</span></p>
+                        </div>
+                        <div class="pts-badge text-xs font-bold">70 PTS</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-3" class="hidden space-y-4">
+                <div class="game-card p-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img id="user-img" src="" class="w-12 h-12 rounded-full border-2 border-indigo-500">
+                        <div>
+                            <p id="user-name" class="game-font text-indigo-600">-</p>
+                            <p id="user-login-time" class="text-[10px] text-slate-400">Login: -</p>
+                        </div>
+                    </div>
+                    <hr class="mb-4">
+                    <h5 class="game-font text-sm mb-3">RIWAYAT PANEL</h5>
+                    <div id="history-list" class="space-y-2 text-xs text-slate-500">
+                        Belum ada riwayat.
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="custom-modal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-6">
-        <div class="card w-full max-w-xs p-10 text-center border-t-4 border-indigo-500 shadow-2xl">
-            <div id="modal-icon" class="w-20 h-20 rounded-3xl mx-auto mb-8 flex items-center justify-center text-4xl"></div>
-            <h3 id="modal-title" class="text-2xl font-black mb-4"></h3>
-            <div id="modal-content" class="text-xs text-slate-400 mb-10 leading-relaxed"></div>
-            <button onclick="document.getElementById('custom-modal').classList.add('hidden')" class="w-full py-4 bg-indigo-600 rounded-xl font-black text-[10px] tracking-[0.2em] uppercase">LANJUTKAN</button>
+    <div id="modal-confirm" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-6 z-[100]">
+        <div class="game-card p-8 w-full max-w-xs text-center">
+            <div class="text-4xl mb-4">❓</div>
+            <h3 class="game-font text-lg mb-2">Anda Yakin?</h3>
+            <p id="modal-text" class="text-sm text-slate-500 mb-6"></p>
+            <div class="flex gap-2">
+                <button onclick="closeModal()" class="flex-1 py-3 bg-slate-200 rounded-xl font-bold">Batal</button>
+                <button id="btn-confirm-yes" class="flex-1 py-3 btn-game font-bold">Yakin!</button>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, onValue, push, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, set, push, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAa1YQqXXUn3ssriyyhl6mYHo47-rOcnmg",
@@ -116,193 +157,130 @@
         const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
 
-        let targetAds = 0, currentAds = 0, selectedRam = "", selectedId = "", currentStock = 0;
-        const adLink = "https://widthwidowzoology.com/vmsuxp7mg0?key=e69a17094ebdb4761ca5607561ac9184";
+        let userPoints = 0;
+        let selectedTrade = null;
 
-        // MONITOR MAINTENANCE & RESTOK MODE
-        onValue(ref(db, 'settings'), (snap) => {
-            const data = snap.val() || {};
-            const overlay = document.getElementById('mt-overlay');
-            const oIcon = document.getElementById('overlay-icon');
-            const oTitle = document.getElementById('overlay-title');
-            const oDesc = document.getElementById('overlay-desc');
-
-            if (data.maintenance) {
-                overlay.style.display = 'flex';
-                oIcon.innerText = "🛠";
-                oTitle.innerText = "Sistem Maintenance";
-                oDesc.innerText = "Mohon menunggu sebentar, sistem sedang dioptimalkan.";
-            } else if (data.restok_mode) {
-                overlay.style.display = 'flex';
-                oIcon.innerText = "📦";
-                oTitle.innerText = "Sedang Restok Panel";
-                oDesc.innerText = "Sebentar website ini sedang restok panel follow saluran untuk melihat kapan selesai restoknya.";
-            } else {
-                overlay.style.display = 'none';
-            }
-        });
-
-        // MONITOR RAM STATUS (PER ID)
-        onValue(ref(db, 'settings/ram_status'), (snap) => {
-            const status = snap.val() || {};
-            document.querySelectorAll('.ram-btn').forEach(btn => {
-                const id = btn.dataset.id;
-                const active = status[id] !== false;
-                btn.style.pointerEvents = active ? 'auto' : 'none';
-                btn.style.opacity = active ? '1' : '0.4';
-                btn.style.borderColor = active ? '' : '#ef4444';
-                if(!active) btn.querySelector('span').innerHTML = "<b class='text-red-500'>OFF BY ADMIN</b>";
-                else btn.querySelector('span').innerText = `ID ${id} • ${btn.dataset.ads} Ads`;
-            });
-        });
-
+        // AUTH
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('app-section').classList.remove('hidden');
+                document.getElementById('user-pts-display').classList.remove('hidden');
+                
+                document.getElementById('user-img').src = user.photoURL;
+                document.getElementById('user-name').innerText = user.displayName;
+                document.getElementById('user-login-time').innerText = "Login: " + new Date().toLocaleTimeString();
+                
+                loadUserData(user.uid);
+                syncStok();
                 syncHistory(user.email);
-                monitorStock();
             }
         });
 
         document.getElementById('btn-login').onclick = () => signInWithPopup(auth, provider);
 
-        const tGen = document.getElementById('tab-gen'), tList = document.getElementById('tab-list');
-        const pGen = document.getElementById('page-gen'), pList = document.getElementById('page-list');
-        tGen.onclick = () => { tGen.classList.add('active'); tList.classList.remove('active'); pGen.classList.remove('hidden'); pList.classList.add('hidden'); }
-        tList.onclick = () => { tList.classList.add('active'); tGen.classList.remove('active'); pList.classList.remove('hidden'); pGen.classList.add('hidden'); }
+        // DATA USER (POINTS)
+        function loadUserData(uid) {
+            onValue(ref(db, `users/${uid}/points`), (snap) => {
+                userPoints = snap.val() || 0;
+                document.getElementById('user-pts-display').innerText = userPoints + " PTS";
+            });
+        }
+
+        // KUMPULKAN PTS
+        document.getElementById('btn-watch').onclick = () => {
+            window.open("https://widthwidowzoology.com/vmsuxp7mg0?key=e69a17094ebdb4761ca5607561ac9184", "_blank");
+            const uid = auth.currentUser.uid;
+            set(ref(db, `users/${uid}/points`), userPoints + 1);
+        };
+
+        // NAV LOGIC
+        const tabs = [1, 2, 3];
+        tabs.forEach(t => {
+            document.getElementById(`nav-${t}`).onclick = () => {
+                tabs.forEach(x => {
+                    document.getElementById(`nav-${x}`).classList.remove('active');
+                    document.getElementById(`tab-content-${x}`).classList.add('hidden');
+                });
+                document.getElementById(`nav-${t}`).classList.add('active');
+                document.getElementById(`tab-content-${t}`).classList.remove('hidden');
+            }
+        });
+
+        // STOK MONITORING
+        function syncStok() {
+            onValue(ref(db, 'stok_akun'), (snap) => {
+                const data = snap.val() || {};
+                const counts = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
+                Object.values(data).forEach(v => { if(v.status === 'available') counts[v.ram_id]++; });
+                for(let i=1; i<=5; i++) document.getElementById(`s-${i}`).innerText = counts[i];
+            });
+        }
+
+        // TRADE LOGIC
+        window.confirmTrade = (id, price, label) => {
+            if (userPoints < price) return alert("Poin tidak cukup!");
+            selectedTrade = { id, price, label };
+            document.getElementById('modal-text').innerText = `Tukarkan ${price} PTS dengan Panel ${label}?`;
+            document.getElementById('modal-confirm').classList.remove('hidden');
+        };
+
+        window.closeModal = () => document.getElementById('modal-confirm').classList.add('hidden');
+
+        document.getElementById('btn-confirm-yes').onclick = async () => {
+            const { id, price, label } = selectedTrade;
+            const uid = auth.currentUser.uid;
+            const email = auth.currentUser.email;
+
+            const snap = await get(ref(db, 'stok_akun'));
+            let targetKey = null, acc = null;
+            if (snap.exists()) {
+                const all = snap.val();
+                targetKey = Object.keys(all).find(k => all[k].status === 'available' && all[k].ram_id === id);
+                if (targetKey) acc = all[targetKey];
+            }
+
+            if (!targetKey) {
+                alert("Yah, stok baru saja habis!");
+            } else {
+                // Potong Poin
+                await set(ref(db, `users/${uid}/points`), userPoints - price);
+                // Pindah ke history
+                await push(ref(db, 'history_klaim'), { ...acc, ram: label, claimed_by: email, claimed_at: Date.now() });
+                // Tandai stok used
+                await update(ref(db, `stok_akun/${targetKey}`), { status: 'used' });
+                alert("🎉 Berhasil! Cek menu AKUN.");
+            }
+            closeModal();
+        };
 
         function syncHistory(email) {
             onValue(ref(db, 'history_klaim'), (snap) => {
-                const list = document.getElementById('my-accounts-list');
-                list.innerHTML = ""; let found = false; const now = Date.now();
+                const list = document.getElementById('history-list');
+                list.innerHTML = "";
                 if (snap.exists()) {
-                    const data = snap.val();
-                    Object.keys(data).forEach(key => {
-                        const item = data[key];
+                    Object.values(snap.val()).forEach(item => {
                         if (item.claimed_by === email) {
-                            if (now - item.claimed_at > 86400000) remove(ref(db, `history_klaim/${key}`)); 
-                            else {
-                                found = true;
-                                list.innerHTML += `
-                                <div class="p-6 bg-slate-900 rounded-3xl border border-indigo-500/20 mb-4 text-left">
-                                    <div class="flex justify-between mb-4 items-center">
-                                        <span class="text-[10px] font-black text-indigo-400 uppercase">${item.ram} SERVER</span>
-                                        <span class="text-[8px] font-black px-3 py-1 rounded-full bg-green-500/10 text-green-500">ACTIVE</span>
-                                    </div>
-                                    <div class="space-y-2 mb-4">
-                                        <div class="flex justify-between"><span class="text-[9px] text-slate-500">Username</span><span class="text-xs text-slate-200">${item.username}</span></div>
-                                        <div class="flex justify-between"><span class="text-[9px] text-slate-500">Password</span><span class="text-xs text-slate-200">${item.password}</span></div>
-                                    </div>
-                                    <a href="https://myselfpanellyi.claidexdigital.tokyo" target="_blank" class="block w-full py-3 bg-indigo-500 text-white text-center rounded-xl text-[10px] font-black uppercase tracking-widest">BUKA PANEL</a>
-                                </div>`;
-                            }
+                            list.innerHTML += `
+                            <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
+                                <p class="font-bold text-indigo-600">${item.ram} PANEL</p>
+                                <p>U: ${item.username} | P: ${item.password}</p>
+                            </div>`;
                         }
                     });
                 }
-                if(!found) list.innerHTML = "Belum ada riwayat akun.";
             });
         }
 
-        function monitorStock() {
-            onValue(ref(db, 'stok_akun'), (snap) => {
-                let count = 0;
-                if (snap.exists()) {
-                    Object.values(snap.val()).forEach(v => { 
-                        if(v.status === 'available' && (selectedId === "" || v.ram_id === selectedId)) count++; 
-                    });
-                }
-                currentStock = count;
-                const info = document.getElementById('stock-info');
-                info.innerText = count > 0 ? `STOK: ${count} SERVER` : "STOK HABIS";
-                info.className = `text-[9px] px-3 py-1 rounded-full font-bold ${count > 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`;
-                
-                // Update button if stock empty
-                const cb = document.getElementById('btn-claim');
-                if (selectedId !== "" && currentStock <= 0) {
-                    cb.disabled = false;
-                    cb.innerText = "FOLLOW INFO RESTOK";
-                    cb.className = "w-full py-5 bg-green-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-green-500/30";
-                } else if (selectedId !== "" && currentAds < targetAds) {
-                    cb.disabled = true;
-                    cb.innerText = "KLAIM SEKARANG";
-                    cb.className = "w-full py-5 bg-slate-800 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest";
-                }
-            });
-        }
-
-        document.querySelectorAll('.ram-btn').forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll('.ram-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedRam = btn.dataset.ram; selectedId = btn.dataset.id;
-                targetAds = parseInt(btn.dataset.ads); currentAds = 0;
-                document.getElementById('btn-watch-ads').classList.remove('hidden');
-                document.getElementById('ad-count-text').innerText = "0 / " + targetAds;
-                document.getElementById('ad-instruction').innerText = "Klik Tombol Iklan";
-                monitorStock();
-            };
+        // MAINTENANCE MONITOR
+        onValue(ref(db, 'settings'), (snap) => {
+            const d = snap.val() || {};
+            const ov = document.getElementById('mt-overlay');
+            if(d.maintenance || d.restok_mode) {
+                ov.style.display = 'flex';
+                document.getElementById('ov-title').innerText = d.maintenance ? "MAINTENANCE" : "RESTOKING...";
+            } else { ov.style.display = 'none'; }
         });
-
-        document.getElementById('btn-watch-ads').onclick = () => {
-            window.open(adLink, '_blank');
-            currentAds++;
-            document.getElementById('ad-count-text').innerText = `${currentAds} / ${targetAds}`;
-            if (currentAds >= targetAds) {
-                document.getElementById('btn-watch-ads').classList.add('hidden');
-                const cb = document.getElementById('btn-claim');
-                cb.disabled = false;
-                if (currentStock > 0) {
-                    cb.className = "w-full py-5 bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-500/40 animate-bounce";
-                } else {
-                    cb.innerText = "FOLLOW INFO RESTOK";
-                    cb.className = "w-full py-5 bg-green-600 text-white rounded-xl font-black text-xs uppercase tracking-widest";
-                }
-            }
-        };
-
-        document.getElementById('btn-claim').onclick = async () => {
-            if (currentStock <= 0) {
-                window.open("https://whatsapp.com/channel/0029Vb76MVVHrDZenj4Tw92Y", "_blank");
-                return;
-            }
-
-            const email = auth.currentUser.email;
-            const curId = selectedId;
-            const m = document.getElementById('custom-modal'), mI = document.getElementById('modal-icon'), mT = document.getElementById('modal-title'), mC = document.getElementById('modal-content');
-            
-            try {
-                const snap = await get(ref(db, 'stok_akun'));
-                let targetKey = null, accData = null;
-                if (snap.exists()) {
-                    const all = snap.val();
-                    for (const key in all) { 
-                        if (all[key].status === 'available' && all[key].ram_id === curId) { 
-                            targetKey = key; accData = all[key]; break; 
-                        } 
-                    }
-                }
-
-                if (targetKey && accData) {
-                    await push(ref(db, 'history_klaim'), { ...accData, ram: selectedRam, claimed_by: email, claimed_at: Date.now() });
-                    await update(ref(db, `stok_akun/${targetKey}`), { status: 'used' });
-                    mI.innerHTML = "✅"; mI.className = "w-20 h-20 rounded-3xl mx-auto mb-8 bg-green-500/10 text-green-400 flex items-center justify-center text-4xl";
-                    mT.innerText = "BERHASIL"; mC.innerHTML = `Akun <b>${selectedRam}</b> telah ditambahkan ke daftar akun Anda.`;
-                } else {
-                    alert("Stok baru saja habis!");
-                }
-                m.classList.remove('hidden'); resetUI();
-            } catch (err) { alert("Error: " + err.message); }
-        };
-
-        function resetUI() {
-            currentAds = 0; selectedRam = ""; selectedId = "";
-            document.querySelectorAll('.ram-btn').forEach(b => b.classList.remove('active'));
-            const cBtn = document.getElementById('btn-claim');
-            cBtn.disabled = true; cBtn.innerText = "KLAIM SEKARANG";
-            cBtn.className = "w-full py-5 bg-slate-800 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest";
-            document.getElementById('ad-count-text').innerText = "0"; document.getElementById('ad-instruction').innerText = "Pilih RAM";
-        }
     </script>
 </body>
 </html>
