@@ -96,6 +96,7 @@
 
         let targetAds = 0, currentAds = 0, selectedRam = "", selectedId = "";
         const adLink = "https://widthwidowzoology.com/vmsuxp7mg0?key=e69a17094ebdb4761ca5607561ac9184";
+        const panelLink = "https://myselfpanellyi.claidexdigital.tokyo";
 
         // TAB SWITCHING
         document.getElementById('tab-gen').onclick = () => {
@@ -111,7 +112,7 @@
             document.getElementById('page-gen').classList.add('hidden');
         };
 
-        // MASTER MONITOR (RAM STATUS & STOK)
+        // MASTER MONITOR
         function updateUIRam() {
             get(ref(db, 'settings/ram_status')).then(statusSnap => {
                 const manualStatus = statusSnap.val() || {};
@@ -216,11 +217,10 @@
             }
 
             if (targetKey) {
-                // Mencatat email dan data klaim untuk dibaca bot Telegram
                 await push(ref(db, 'history_klaim'), { 
                     ...accData, 
                     ram: selectedRam, 
-                    email: email, // Ditambahkan agar fitur /info di bot mencatat emailnya
+                    email: email,
                     claimed_by: email, 
                     claimed_at: Date.now() 
                 });
@@ -249,16 +249,19 @@
                     filtered.forEach(item => {
                         list.innerHTML += `
                             <div class='card p-5 mb-3 border-l-4 border-indigo-500'>
-                                <div class="flex justify-between items-start mb-2">
+                                <div class="flex justify-between items-start mb-4">
                                     <b class="text-indigo-400 text-sm">${item.ram} SERVER</b>
                                     <span class="text-[8px] bg-slate-800 px-2 py-1 rounded">ID: ${item.ram_id}</span>
                                 </div>
-                                <div class="space-y-1">
+                                <div class="space-y-1 mb-4">
                                     <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Username</p>
                                     <code class="block bg-slate-900 p-2 rounded text-xs border border-slate-700">${item.username}</code>
                                     <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mt-2">Password</p>
                                     <code class="block bg-slate-900 p-2 rounded text-xs border border-slate-700">${item.password}</code>
                                 </div>
+                                <a href="${panelLink}" target="_blank" class="block w-full bg-indigo-600 text-white text-center py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-500/20 active:scale-95 transition-transform">
+                                    Login Ke Panel
+                                </a>
                             </div>`;
                     });
                 } else {
